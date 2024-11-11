@@ -1,4 +1,5 @@
 import pygame
+from text import Text
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -8,12 +9,13 @@ running = True
 
 selected_index = 0
 
+_text = "hejhejhejhejhejhejhejhejhejhejhejhej"
+text_skrivare = Text(screen, font)
+
 def draw_ui():
     for i in range(4):
         pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 520, 200, 100))
-        text = font.render("hejhej", True, "white")
-        textRect = text.get_rect()
-        screen.blit(text, (textRect.x+1000, textRect.y, textRect.width, textRect.height))
+        #göra outline för alla boxar förutom den man kollar på så att säga
         if not selected_index == i:
             pygame.draw.rect(screen, (10, 10, 10), (200+(220*i)+5, 520+5, 200-10, 100-10))
 
@@ -32,6 +34,7 @@ while running:
     screen.fill((10, 10, 10))
 
     draw_ui()
+    text_skrivare.skriv_text(_text, clock)
 
     pygame.display.flip()
 
