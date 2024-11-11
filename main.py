@@ -1,5 +1,5 @@
 import pygame
-from text import Text
+from time import sleep
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -9,8 +9,11 @@ running = True
 
 selected_index = 0
 
-_text = "hejhejhejhejhejhejhejhejhejhejhejhej"
-text_skrivare = Text(screen, font)
+text = "göra outline för alla boxar förutom den man kollar på så att säga"
+drawn_text = ""
+text_index = 0
+text_split = list(text)
+texts = []
 
 def draw_ui():
     for i in range(4):
@@ -34,7 +37,22 @@ while running:
     screen.fill((10, 10, 10))
 
     draw_ui()
-    text_skrivare.skriv_text(_text, clock)
+    #draw text
+    
+    if len(text_split) > 0:
+        drawn_text += text_split[0]
+        _ts = font.render(drawn_text, True, "white")
+        _tr = _ts.get_rect()
+        screen.blit(_ts, _tr)
+        text_split.pop(0)
+        sleep(0.1)
+    else:
+        if not text in texts:
+            texts.append(text)
+    for txt in texts:
+        _ts = font.render(txt, True, "white")
+        _tr = _ts.get_rect()
+        screen.blit(_ts, _tr)
 
     pygame.display.flip()
 
