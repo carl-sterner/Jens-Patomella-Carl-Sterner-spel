@@ -9,7 +9,7 @@ running = True
 
 selected_index = 0
 
-text = "göra outline för alla boxar förutom den man kollar på så att säga"
+text = "111111P"
 drawn_text = ""
 text_index = 0
 text_split = list(text)
@@ -21,6 +21,26 @@ def draw_ui():
         #göra outline för alla boxar förutom den man kollar på så att säga
         if not selected_index == i:
             pygame.draw.rect(screen, (10, 10, 10), (200+(220*i)+5, 520+5, 200-10, 100-10))
+
+def DrawText(_t, _t_s, i):
+    global dt
+    global _t_split
+    global text_index
+    if _t not in texts:
+        if i <= len(_t):
+            if i == 0:
+                dt = ""
+                _t_split = list(_t)
+            if i < len(_t):
+                dt += _t_split[0]
+                _ts = font.render(dt, True, "white")
+                _tr = _ts.get_rect()
+                screen.blit(_ts, _tr)
+                _t_split.pop(0)
+                sleep(_t_s)
+            else:
+                texts.append(_t)
+                text_index = 0
 
 while running:
     for event in pygame.event.get():
@@ -35,20 +55,10 @@ while running:
                     selected_index += 1
 
     screen.fill((10, 10, 10))
-
     draw_ui()
-    #draw text
     
-    if len(text_split) > 0:
-        drawn_text += text_split[0]
-        _ts = font.render(drawn_text, True, "white")
-        _tr = _ts.get_rect()
-        screen.blit(_ts, _tr)
-        text_split.pop(0)
-        sleep(0.1)
-    else:
-        if not text in texts:
-            texts.append(text)
+    DrawText("ei ei ei", 0.1, text_index)
+
     for txt in texts:
         _ts = font.render(txt, True, "white")
         _tr = _ts.get_rect()
@@ -57,5 +67,6 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)
+    text_index += 1
 
 pygame.quit()
