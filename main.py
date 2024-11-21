@@ -32,6 +32,7 @@ menyVal = ""
 menyValIndex = 0
 menyValValIndex = 0
 gameState = 0 #0: vanlig meny, 1:när du är mot monster, osv
+harTryckt = False
 
 fightGrej = 0
 fightGrejHåll = 1
@@ -104,17 +105,28 @@ def draw_ui():
                 pygame.draw.rect(screen, (40, 40, 40), (235, 340+100, 110, 60), 0, 5)
             else:
                 pygame.draw.rect(screen, (40, 40, 40), (235+500, 340+100, 110, 60), 0, 5)
-            #PrintText("Norr", 250, 350)
-            #PrintText("Syd", 750, 350)
-            #PrintText("Väst", 250, 450)
-            #PrintText("Öst", 750, 450)
-            DrawText("Norr", 0.05, text_index, 250, 350, 1)
-            DrawText("Syd", 0.05, text_index, 750, 350, 2)
-            DrawText("Väst", 0.05, text_index, 250, 450, 3)
-            DrawText("Öst", 0.05, text_index, 750, 450, 4)
+            PrintText("Norr", 250, 350)
+            PrintText("Syd", 750, 350)
+            PrintText("Väst", 250, 450)
+            PrintText("Öst", 750, 450)
+            #DrawText("Norr", 0.05, text_index, 250, 350, 1)
+            #DrawText("Syd", 0.05, text_index, 750, 350, 2)
+            #DrawText("Väst", 0.05, text_index, 250, 450, 3)
+            #DrawText("Öst", 0.05, text_index, 750, 450, 4)
         elif menyVal == "Inventory":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
+            j=0
+            k=0
+            for i in player.inv:
+                    PrintText(str(i), 250+(280*j), 340+(60*k))
+                    
+                    j+=1
+                    if j == 3:
+                        k+=1
+                        j=0
+            j=0
+            k=0
         elif menyVal == "Stats":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
@@ -129,16 +141,11 @@ def draw_ui():
             #DrawText("luck: ", 0.01, text_index, 530, 400, 9)
             #DrawText("      ", 0.01, text_index, 550, 400, 10)
 
-            PrintText("x, y: ", 230, 350)
-            PrintText("  ", 250, 350)
-            PrintText("rum: ", 230, 400)
-            PrintText("   ", 250, 400)
+            PrintText(f"x, y: {(player.pos % karta.w)+1}, {(player.pos // karta.w)+1}", 230, 350)
+            PrintText(f"rum: {player.pos}", 230, 400)
             PrintText("str: ", 230, 450)
-            PrintText("    ", 250, 450)
             PrintText("lvl: ", 530, 350)
-            PrintText("     ", 550, 350)
             PrintText("luck: ", 530, 400)
-            PrintText("      ", 550, 400)
         elif menyVal == " ":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
@@ -169,6 +176,18 @@ def draw_ui():
         elif menyVal == "Inventory":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
+
+            j=0
+            k=0
+            for i in player.inv:
+                    PrintText(str(i), 250+(280*j), 340+(60*k))
+                    
+                    j+=1
+                    if j == 3:
+                        k+=1
+                        j=0
+            j=0
+            k=0
         elif menyVal == "Fly":
             pass
         
@@ -182,8 +201,6 @@ def draw_ui():
             else:
                 pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
 
-
-    
 def ClearText(text):
     if text == "allt":
         for i in range(len(texts)):
@@ -193,7 +210,7 @@ def ClearText(text):
         i = texts.index(text)
         texts.pop(i)
         texts_pos.pop(i)
-        
+
 def Start():#körs en gång i början
     karta.Skapa()
 
@@ -234,63 +251,72 @@ while running:
                         menyValValIndex -= 2
 
             if event.key == pygame.K_RETURN:
-                if menyVal == "Fight":
-                    fightPause = True
-                    if fightGrej >= 600-210+10 and fightGrej <= 600+60-210+10:
-                        PrintText("+30", 500, 200)              #pos+bredd-offset+1/2 bredd
-                    elif fightGrej >= 550-210+10 and fightGrej <= 550+160-210+10:
-                        PrintText("+20", 500, 200)
-                                    #pos-offset+1/2 bredd
-                    elif fightGrej >= 450-210+10 and fightGrej <= 450+360-210+10:
-                        PrintText("+10", 500, 200)
-                if menyVal == "Gå":
-                    if menyValValIndex == 0:
-                        player.Move("Norr")
-                    elif menyValValIndex == 1:
-                        player.Move("Syd")
-                    elif menyValValIndex == 2:
-                        player.Move("Öst")
-                    else:
-                        player.Move("Väst")
-                if gameState == 0:
-                    #kolla om man väljer "Gå" i menyn
-                    if menyValIndex == 0:
-                        text_index=0
-                        menyVal = "Gå"
-                    elif menyValIndex == 1:
-                        text_index=0
-                        menyVal = "Inventory"
-                    elif menyValIndex == 2:
-                        text_index=0
-                        menyVal = "Stats"
-                    else:
-                        text_index=0
-                        menyVal = " "
-                elif gameState == 1:
-                    if menyValIndex == 0:
-                        text_index = 0
-                        menyVal = "Fight"
-                        if not fightPause:
-                            fightGrej = 0
-                    elif menyValIndex == 1:
-                        text_index = 0
-                        menyVal = "Interagera"
-                    elif menyValIndex == 2:
-                        text_index = 0
-                        menyVal = "Inventory"
-                    elif menyValIndex == 3:
-                        text_index = 0
-                        menyVal = "Fly"
-                    else:
-                        text_index = 0
-                        menyVal = " "
-
-                if menyVal == " ":
-                    gameState = 1
-                    ClearText("allt")
-                elif menyVal == "Fly":
-                    gameState = 0
-                    ClearText("allt")
+                if not harTryckt:
+                    if menyVal == "Fight":
+                        fightPause = True
+                        if fightGrej >= 600-210+10 and fightGrej <= 600+60-210+10:
+                            PrintText("+30", 500, 200)              #pos+bredd-offset+1/2 bredd
+                        elif fightGrej >= 550-210+10 and fightGrej <= 550+160-210+10:
+                            PrintText("+20", 500, 200)
+                                        #pos-offset+1/2 bredd
+                        elif fightGrej >= 450-210+10 and fightGrej <= 450+360-210+10:
+                            PrintText("+10", 500, 200)
+                if not harTryckt:
+                    if menyVal == "Gå":
+                        if menyValValIndex == 0:
+                            player.Move("Norr")
+                        elif menyValValIndex == 1:
+                            player.Move("Syd")
+                        elif menyValValIndex == 2:
+                            player.Move("Öst")
+                        else:
+                            player.Move("Väst")
+                        ClearText("allt")
+                        priorityIndex = 1
+                        menyValValIndex = 0
+                        menyVal = ""
+                        fightPause = False
+                        harTryckt = True
+                if not harTryckt:
+                    if gameState == 0:
+                        #kolla om man väljer "Gå" i menyn
+                        if menyValIndex == 0:
+                            text_index=0
+                            menyVal = "Gå"
+                        elif menyValIndex == 1:
+                            text_index=0
+                            menyVal = "Inventory"
+                        elif menyValIndex == 2:
+                            text_index=0
+                            menyVal = "Stats"
+                        else:
+                            text_index=0
+                            menyVal = " "
+                    elif gameState == 1:
+                        if menyValIndex == 0:
+                            text_index = 0
+                            menyVal = "Fight"
+                            if not fightPause:
+                                fightGrej = 0
+                        elif menyValIndex == 1:
+                            text_index = 0
+                            menyVal = "Interagera"
+                        elif menyValIndex == 2:
+                            text_index = 0
+                            menyVal = "Inventory"
+                        elif menyValIndex == 3:
+                            text_index = 0
+                            menyVal = "Fly"
+                        else:
+                            text_index = 0
+                            menyVal = " "
+                if not harTryckt:
+                    if menyVal == " ":
+                        gameState = 1
+                        ClearText("allt")
+                    elif menyVal == "Fly":
+                        gameState = 0
+                        ClearText("allt")
 
             if event.key == pygame.K_BACKSPACE:
                 ClearText("allt")
@@ -298,9 +324,12 @@ while running:
                 menyValValIndex = 0
                 menyVal = ""
                 fightPause = False
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_RETURN:
+                harTryckt = False
 
     draw_ui()
-    
+
     for txt, txt_pos in zip(texts, texts_pos):
         textSurface = font.render(txt, True, "white")
         textRect = textSurface.get_rect()
@@ -328,6 +357,5 @@ while running:
         menyVal = ""
         fightDelay = 50
         fade = 0
-    
     clock.tick(120)
 pygame.quit()

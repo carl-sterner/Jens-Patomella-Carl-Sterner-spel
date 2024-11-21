@@ -2,8 +2,11 @@ class föremål:
     def __init__(self, pos, typ):
         self.pos = pos
         self.typ = typ
+
+    def Placera(self):
+        pass
 class player:
-    def __init__(self, pos, inv = {'a': 1, 'b': 2, 'c': 3}):
+    def __init__(self, pos, inv = ["ab", "bc", "cfd", "dfc", "fab", "bfc", "cdv", "dvc", "avb"]):
         self.pos = pos
         self.inv = inv
     
