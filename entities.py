@@ -8,19 +8,33 @@ class föremål:
         self.items_pos.append(pos)
 
 class player:
-    def __init__(self, pos, inv = ["ab", "bc", "cfd", "dfc", "fab", "bfc", "cdv", "dvc", "avb"]):
+    def __init__(self, hp, lvl, str, skill, pos, inventory = ["ab", "bc", "cfd", "dfc", "fab", "bfc", "cdv", "dvc", "avb"]):
+        self.hp = hp
+        self.lvl = lvl
+        self.str = str
+        self.skill = skill
+        self.inventory = inventory
         self.pos = pos
-        self.inv = inv
-
-    def Move(self, dir):
+   
+    def Move(self, direction):
         try:
-            if dir == "Norr":
+            if direction == "Norr":
                 self.pos -= 1
-            elif dir == "Syd":
+            elif direction == "Syd":
                 self.pos += 1
-            elif dir == "Öst":
+            elif direction == "Öst":
                 self.pos -= 10
-            elif dir == "Väst":
+            elif direction == "Väst":
                 self.pos += 10
         except:
             print("fel i player.Move()")
+    
+    def levelup(self, amount):
+        self.lvl += amount
+
+   
+
+class monster:
+    def __init__(self, str, cords):
+        self.str = str
+        self.cords = cords
