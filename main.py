@@ -10,8 +10,7 @@ class Karta():
     
     def Placera(self):
         for i in range(100):
-            j = random.randint(0, 100)
-            if j == 0:
+            if random.randint(0, 100) == 0:
                 if not i == player.pos:
                     k = random.randint(0, 3)
                     if k == 0:
@@ -23,11 +22,6 @@ class Karta():
                     else:
                         föremål.Placera("d", i)
 
-    def Skapa(self):
-        for i in range(self.w):
-            for j in range(self.h):
-                if random.randint(0, 10) == 1:
-                    self.Placera()
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -35,7 +29,7 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 36)
 running = True
 
-player = player(45)
+player = player(10, 0, 1, 0, 45)
 karta = Karta(10, 10)
 föremål = föremål()
 
@@ -130,7 +124,7 @@ def draw_ui():
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
             j=0
             k=0
-            for i in player.inv:
+            for i in player.inventory:
                     PrintText(str(i), 250+(280*j), 340+(60*k))
                     
                     j+=1
@@ -155,9 +149,10 @@ def draw_ui():
 
             PrintText(f"x, y: {(player.pos % karta.w)+1}, {(player.pos // karta.w)+1}", 230, 350)
             PrintText(f"rum: {player.pos}", 230, 400)
-            PrintText("str: ", 230, 450)
-            PrintText("lvl: ", 530, 350)
-            PrintText("luck: ", 530, 400)
+            PrintText(f"str: {player.str}", 230, 450)
+            PrintText(f"lvl: {player.str}", 530, 350)
+            PrintText(f"skill: {player.skill}", 530, 400)
+            PrintText(f"hp: {player.hp}", 530, 450)
         elif menyVal == " ":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
@@ -191,7 +186,7 @@ def draw_ui():
 
             j=0
             k=0
-            for i in player.inv:
+            for i in player.inventory:
                     PrintText(str(i), 250+(280*j), 340+(60*k))
                     
                     j+=1
@@ -221,18 +216,13 @@ def ClearText(text):
         for i in range(len(texts)):
             texts.pop()
             texts_pos.pop()
-    if text in texts:
+    elif text in texts:
         i = texts.index(text)
         texts.pop(i)
         texts_pos.pop(i)
 
 def Start():#körs en gång i början
-    karta.Skapa()
     karta.Placera()
-
-def HarGått():
-    if player.pos == 15:
-        PrintText("du ser ett monster", 200, 200)
 
 Start()
 while running:
@@ -297,7 +287,6 @@ while running:
                         menyVal = ""
                         fightPause = False
                         harTryckt = True
-                        HarGått()
                 if not harTryckt:
                     if gameState == 0:
                         #kolla om man väljer "Gå" i menyn
