@@ -203,20 +203,7 @@ def draw_ui():
         elif menyVal == "Fly":
             pass
         
-    #minimap
-    k = 0
-    for i in range(karta.w):
-        for j in range(karta.h):
-            print(player.pos)
-            pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
-            for h in föremål.items_pos:
-                if k == h:
-                    pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
-
-            if k == player.pos:
-                pygame.draw.rect(screen, (240, 240, 240), (i*11+1160, j*11+10, 10, 10))
-            
-            k+=1
+    pygame.draw.rect(screen, (240, 240, 240), (player.pos, j*11+10, 10, 10))
 
 def ClearText(text):
     if text == "allt":
@@ -231,6 +218,19 @@ def ClearText(text):
 def Start():#körs en gång i början
     karta.Skapa()
     karta.Placera()
+
+    k = 0
+    for i in range(karta.w):
+        for j in range(karta.h):
+            pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
+            for h in föremål.items_pos:
+                if k == h:
+                    pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+
+            if k == player.pos:
+                pygame.draw.rect(screen, (240, 240, 240), (i*11+1160, j*11+10, 10, 10))
+            
+            k+=1
 
 def HarGått():
     if player.pos == 15:
