@@ -9,8 +9,19 @@ class Karta():
         self.h = h
     
     def Placera(self):
-        #entities.item.placera()
-        pass
+        for i in range(100):
+            j = random.randint(0, 100)
+            if j == 0:
+                if not i == player.pos:
+                    k = random.randint(0, 3)
+                    if k == 0:
+                        föremål.Placera("a", i)
+                    elif k == 1:
+                        föremål.Placera("b", i)
+                    elif k == 2:
+                        föremål.Placera("c", i)
+                    else:
+                        föremål.Placera("d", i)
 
     def Skapa(self):
         for i in range(self.w):
@@ -26,6 +37,7 @@ running = True
 
 player = player(45)
 karta = Karta(10, 10)
+föremål = föremål()
 
 #meny
 menyVal = ""
@@ -192,14 +204,19 @@ def draw_ui():
             pass
         
     #minimap
+    k = 0
     for i in range(karta.w):
         for j in range(karta.h):
-            player_x = player.pos % karta.w
-            player_y = player.pos // karta.w
-            if (i, j) == (player_x, player_y):
-                pygame.draw.rect(screen, (250, 250, 250), (i*11+1160, j*11+10, 10, 10))
-            else:
-                pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
+            print(player.pos)
+            pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
+            for h in föremål.items_pos:
+                if k == h:
+                    pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+
+            if k == player.pos:
+                pygame.draw.rect(screen, (240, 240, 240), (i*11+1160, j*11+10, 10, 10))
+            
+            k+=1
 
 def ClearText(text):
     if text == "allt":
@@ -213,6 +230,11 @@ def ClearText(text):
 
 def Start():#körs en gång i början
     karta.Skapa()
+    karta.Placera()
+
+def HarGått():
+    if player.pos == 15:
+        PrintText("du ser ett monster", 200, 200)
 
 Start()
 while running:
@@ -277,6 +299,7 @@ while running:
                         menyVal = ""
                         fightPause = False
                         harTryckt = True
+                        HarGått()
                 if not harTryckt:
                     if gameState == 0:
                         #kolla om man väljer "Gå" i menyn
@@ -329,6 +352,9 @@ while running:
                 harTryckt = False
 
     draw_ui()
+    for i,j in zip(föremål.items, föremål.items_pos):
+        if player.pos == j:
+            PrintText(f"du ser föremål {i}", 300, 200)
 
     for txt, txt_pos in zip(texts, texts_pos):
         textSurface = font.render(txt, True, "white")
