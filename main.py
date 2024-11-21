@@ -1,6 +1,22 @@
 import pygame
 from time import sleep
 from entities import *
+import random
+
+class Karta():
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
+    
+    def Placera(self):
+        #entities.item.placera()
+        pass
+
+    def Skapa(self):
+        for i in range(self.w):
+            for j in range(self.h):
+                if random.randint(0, 10) == 1:
+                    self.Placera()
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -8,7 +24,8 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 36)
 running = True
 
-player = player()
+player = player(45)
+karta = Karta(10, 10)
 
 #meny
 menyVal = ""
@@ -67,6 +84,12 @@ def draw_ui():
             #göra outline för alla boxar förutom den man kollar på så att säga
             if not menyValIndex == i:
                 pygame.draw.rect(screen, (10, 10, 10), (200+(220*i)+5, 550+5, 200-10, 80-10))
+        
+        PrintText("Gå", 200+25, 567)
+        PrintText("Inventory", 440, 567)
+        PrintText("Stats", 660+25, 567)
+        PrintText(" ", 880+25, 567)
+
         #menyval
         if menyVal == "Gå":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
@@ -74,21 +97,21 @@ def draw_ui():
 
             #rita vald grej liksom
             if menyValValIndex == 0:
-                pygame.draw.rect(screen, (40, 40, 40), (235, 340, 110, 60))
+                pygame.draw.rect(screen, (40, 40, 40), (235, 340, 110, 60), 0, 5)
             elif menyValValIndex == 1:
-                pygame.draw.rect(screen, (40, 40, 40), (235+500, 340, 110, 60))
+                pygame.draw.rect(screen, (40, 40, 40), (235+500, 340, 110, 60), 0, 5)
             elif menyValValIndex == 2:
-                pygame.draw.rect(screen, (40, 40, 40), (235, 340+100, 110, 60))
+                pygame.draw.rect(screen, (40, 40, 40), (235, 340+100, 110, 60), 0, 5)
             else:
-                pygame.draw.rect(screen, (40, 40, 40), (235+500, 340+100, 110, 60))
+                pygame.draw.rect(screen, (40, 40, 40), (235+500, 340+100, 110, 60), 0, 5)
             #PrintText("Norr", 250, 350)
             #PrintText("Syd", 750, 350)
-            #PrintText("Öst", 250, 450)
-            #PrintText("Väst", 750, 450)
+            #PrintText("Väst", 250, 450)
+            #PrintText("Öst", 750, 450)
             DrawText("Norr", 0.05, text_index, 250, 350, 1)
             DrawText("Syd", 0.05, text_index, 750, 350, 2)
-            DrawText("Öst", 0.05, text_index, 250, 450, 3)
-            DrawText("Väst", 0.05, text_index, 750, 450, 4)
+            DrawText("Väst", 0.05, text_index, 250, 450, 3)
+            DrawText("Öst", 0.05, text_index, 750, 450, 4)
         elif menyVal == "Inventory":
             pygame.draw.rect(screen, (40, 40, 40), (200, 320, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 320+5, 860-10, 200-10))
@@ -125,6 +148,12 @@ def draw_ui():
             #göra outline för alla boxar förutom den man kollar på så att säga
             if not menyValIndex == i:
                 pygame.draw.rect(screen, (10, 10, 10), (200+(220*i)+5, 550+5, 200-10, 80-10))
+        
+        PrintText("Fight", 200+25, 567)
+        PrintText("Interagera", 437, 567)
+        PrintText("Inventory", 660, 567)
+        PrintText("Fly", 880+25, 567)
+
         if menyVal == "Fight":
             pygame.draw.rect(screen, (max(40+fade, 0), max(40+fade, 0), max(40+fade,0)), (200, 320, 860, 200))
             pygame.draw.rect(screen, (max(10+fade, 0), max(10+fade, 0), max(10+fade,0)), (200+5, 320+5, 860-10, 200-10))
@@ -143,6 +172,18 @@ def draw_ui():
         elif menyVal == "Fly":
             pass
         
+    #minimap
+    for i in range(karta.w):
+        for j in range(karta.h):
+            player_x = player.pos % karta.w
+            player_y = player.pos // karta.w
+            if (i, j) == (player_x, player_y):
+                pygame.draw.rect(screen, (250, 250, 250), (i*11+1160, j*11+10, 10, 10))
+            else:
+                pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
+
+
+    
 def ClearText(text):
     if text == "allt":
         for i in range(len(texts)):
@@ -152,7 +193,11 @@ def ClearText(text):
         i = texts.index(text)
         texts.pop(i)
         texts_pos.pop(i)
+        
+def Start():#körs en gång i början
+    karta.Skapa()
 
+Start()
 while running:
     screen.fill((10, 10, 10))
     for event in pygame.event.get():
@@ -200,13 +245,13 @@ while running:
                         PrintText("+10", 500, 200)
                 if menyVal == "Gå":
                     if menyValValIndex == 0:
-                        print("Norr")
+                        player.Move("Norr")
                     elif menyValValIndex == 1:
-                        print("Syd")
+                        player.Move("Syd")
                     elif menyValValIndex == 2:
-                        print("Väst")
+                        player.Move("Öst")
                     else:
-                        print("Öst")
+                        player.Move("Väst")
                 if gameState == 0:
                     #kolla om man väljer "Gå" i menyn
                     if menyValIndex == 0:
@@ -255,16 +300,6 @@ while running:
                 fightPause = False
 
     draw_ui()
-    if gameState == 0:
-        PrintText("Gå", 200+25, 567)
-        PrintText("Inventory", 430+25, 567)
-        PrintText("Stats", 660+25, 567)
-        PrintText(" ", 880+25, 567)
-    elif gameState == 1:
-        PrintText("Fight", 200+25, 567)
-        PrintText("Interagera", 437, 567)
-        PrintText("Inventory", 660, 567)
-        PrintText("Fly", 880+25, 567)
     
     for txt, txt_pos in zip(texts, texts_pos):
         textSurface = font.render(txt, True, "white")
@@ -274,7 +309,6 @@ while running:
 
     pygame.display.flip()
 
-    clock.tick(120)
     text_index += 1
     if not fightPause:
         fightGrej += 7*fightGrejHåll
@@ -294,5 +328,6 @@ while running:
         menyVal = ""
         fightDelay = 50
         fade = 0
-
+    
+    clock.tick(120)
 pygame.quit()
