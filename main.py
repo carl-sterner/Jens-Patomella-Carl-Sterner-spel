@@ -10,7 +10,7 @@ class Karta():
     
     def Placera(self):
         for i in range(100):
-            if random.randint(0, 100) == 0:
+            if random.randint(0, 10) == 0:
                 if not i == player.pos:
                     k = random.randint(0, 3)
                     if k == 0:
@@ -273,14 +273,20 @@ while running:
                             PrintText("+10", 500, 200)
                 if not harTryckt:
                     if menyVal == "Gå":
+                        p_y = (player.pos % karta.w)+1
+                        p_x = (player.pos // karta.w)+1
                         if menyValValIndex == 0:
-                            player.Move("Norr")
+                            if not p_y == 1:
+                                player.Move("Norr")
                         elif menyValValIndex == 1:
-                            player.Move("Syd")
+                            if not p_y == 10:
+                                player.Move("Syd")
                         elif menyValValIndex == 2:
-                            player.Move("Öst")
+                            if not p_x == 1:
+                                player.Move("Öst")
                         else:
-                            player.Move("Väst")
+                            if not p_x == 10:
+                                player.Move("Väst")
                         ClearText("allt")
                         priorityIndex = 1
                         menyValValIndex = 0

@@ -32,8 +32,6 @@ class player:
     def levelup(self, amount):
         self.lvl += amount
 
-   
-
 class monster:
     def __init__(self, str, cords):
         self.str = str
