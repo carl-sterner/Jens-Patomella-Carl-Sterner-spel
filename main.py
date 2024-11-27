@@ -13,6 +13,7 @@ class Karta():
         self.minMon = 21
         self.maxMon = 34
         self.monsters = []
+        self.monsters_pos = []
     
     def PlaceraFöremål(self):
         j = random.randint(self.minObj, self.maxObj)
@@ -20,19 +21,20 @@ class Karta():
             i = random.randint(1, 100)
             if random.randint(0, 10) == 0:
                 if not i == player.pos and not i in föremål.items_pos:
-                    k = random.randint(0, 3)
-                    if k == 0:
-                        föremål.Placera("a", i)
-                    elif k == 1:
-                        föremål.Placera("b", i)
-                    elif k == 2:
-                        föremål.Placera("c", i)
-                    else:
-                        föremål.Placera("d", i)
+                    k = random.choice(["a", "b", "c", "d"])
+                    föremål.Placera(k, i)
     def PlaceraMonster(self):
         j = random.randint(self.minMon, self.maxMon)
-        while j > len(self.monsters):
-            pass
+        while len(self.monsters) < j:
+            i = random.randint(1, 100)
+            if not i == player.pos and not i in föremål.items_pos and not i in self.monsters:
+                typ = random.choice(["Zombie", "Spöke", "Drake"])
+                str = random.randint(5, 20)
+                nyaMonster = Monster(typ, str, i)
+                self.monsters.append(nyaMonster)
+
+
+                
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -43,13 +45,12 @@ running = True
 player = player(10, 0, 1, 0, 45, [])
 karta = Karta(10, 10)
 föremål = föremål()
-monster = monster()
 
 #meny
 menyVal = ""
 menyValIndex = 0
 menyValValIndex = 0
-gameState = 0 #0: vanlig meny, 1:när du är mot monster, osv
+gameState = 0 #0: vanlig meny, 1:när du är i en fight
 harTryckt = False
 
 fightGrej = 0
@@ -64,6 +65,7 @@ text_index = 0
 texts = []
 texts_pos = []
 priorityIndex = 1
+skriver = False
 
 #spelaren
 stårVidItem = False
@@ -77,6 +79,8 @@ def DrawText(text, textSpeed, charIndex, x, y, priority):
     global textSplit
     global text_index
     global priorityIndex
+    global skriver
+    skriver = True
     if priority == priorityIndex:
         if not text in texts:
             if charIndex <= len(text):
@@ -96,6 +100,7 @@ def DrawText(text, textSpeed, charIndex, x, y, priority):
                     texts_pos.append((x,y))
                     text_index = 0
                     priorityIndex += 1
+                    skriver = False
 
 def PrintText(text, x, y):
     texts.append(text)
@@ -249,6 +254,14 @@ def draw_ui():
             for h in föremål.items_pos:
                 if k == h:
                     pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+            for l in range(len(karta.monsters)):
+                if k == karta.monsters[l].cords:
+                    if karta.monsters[l].typ == "Zombie":
+                        pygame.draw.rect(screen, (0, 240, 0), (i*11+1160, j*11+10, 10, 10))
+                    elif karta.monsters[l].typ == "Spöke":
+                        pygame.draw.rect(screen, (0, 0, 240), (i*11+1160, j*11+10, 10, 10))
+                    elif karta.monsters[l].typ == "Drake":
+                        pygame.draw.rect(screen, (240, 240, 0), (i*11+1160, j*11+10, 10, 10))
 
             if k == player.pos:
                 pygame.draw.rect(screen, (240, 240, 240), (i*11+1160, j*11+10, 10, 10))
@@ -260,6 +273,12 @@ def ClearText(text):
         for i in range(len(texts)):
             texts.pop()
             texts_pos.pop()
+    if text == "menyer":
+        for i in texts:
+            if i == "Gå" or i == "Inventory" or i == "Stats" or i == "Fight" or i == "Interagera" or i == "Fly":
+                j = texts.index(i)
+                texts.pop(j)
+                texts_pos.pop(j)
     elif text in texts:
         i = texts.index(text)
         texts.pop(i)
@@ -267,11 +286,11 @@ def ClearText(text):
 
 def Start():#körs en gång i början
     karta.PlaceraFöremål()
+    karta.PlaceraMonster()
 
 Start()
 while running:
-    if not menyVal == "VidItem":
-        ClearText("allt")
+    ClearText("menyer")
     screen.fill((10, 10, 10))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -435,7 +454,6 @@ while running:
             else:
                 stårVidItem_Item = ""
                 stårVidItem = False
-                text_index = 0
                 stårVidItem_Index = 0
         if stårVidItem:
             menyVal = "VidItem"
@@ -443,8 +461,7 @@ while running:
                 DrawText(f"Du ser ett {stårVidItem_Item}", 0.05, text_index, 400, 300, 1)
             elif stårVidItem_Item == "b" or stårVidItem_Item == "d":
                 DrawText(f"Du ser en {stårVidItem_Item}", 0.05, text_index, 400, 300, 1)
-
-
+    
     draw_ui()
 
     for txt, txt_pos in zip(texts, texts_pos):
@@ -452,9 +469,8 @@ while running:
         textRect = textSurface.get_rect()
         textRect.topleft = txt_pos
         screen.blit(textSurface, textRect)
-
-    text_index += 1
-    
+    if skriver:
+        text_index += 1
     if not fightPause:
         fightGrej += 7*fightGrejHåll
     if fightGrej > 825:
