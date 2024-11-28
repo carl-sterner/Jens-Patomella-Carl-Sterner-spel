@@ -12,7 +12,6 @@ class Karta():
         self.minMon = 21
         self.maxMon = 34
         self.monsters = []
-        self.monsters_pos = []
     
     def PlaceraFöremål(self):
         j = random.randint(self.minObj, self.maxObj)
@@ -60,6 +59,9 @@ menyVal = 0
 #menyVal 9(gamestate 1) = fly från fight
 subMenyVal = 0
 #tex när du är i menyVal 1 så är subMenyVal 0 = Norr, 1 = Syd osv
+
+#variabler för när du är i en fight
+
 
 #Skapa objekt
 player = player(10, 0, 1, 0, 45, [])
@@ -138,7 +140,49 @@ class UI:
             if not p_x == 10:
                 F.PrintText(screen, font, "Öst", 770, 500, textObjekt)
             return       
-        
+
+        if menyVal == 2:
+            #rita själva boxen
+            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+            
+            #allt under här är för att räkna x,y offset(samt text) för de olika grejerna man har i inventory
+            x=0
+            y=0
+            for i in range(len(player.inventory)):
+                F.PrintText(screen, font, str(player.inventory[i]), 250+(280*x), 449+(60*y), textObjekt)
+                x+=1
+                if x == 3:
+                    y+=1
+                    x=0
+            x=0
+            y=0
+            return
+        if menyVal == 3:
+            #rita box och stats
+            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+            F.PrintText(screen, font, f"x, y: {(player.pos % karta.w)+1}, {(player.pos // karta.w)+1}", 230, 450, textObjekt)
+            F.PrintText(screen, font, f"rum: {player.pos}", 230, 500, textObjekt)
+            F.PrintText(screen, font, f"str: {player.str}", 230, 550, textObjekt)
+            F.PrintText(screen, font, f"lvl: {player.lvl}", 530, 450, textObjekt)
+            F.PrintText(screen, font, f"skill: {player.skill}", 530, 500, textObjekt)
+            F.PrintText(screen, font, f"hp: {player.hp}", 530, 550, textObjekt)
+            return
+        if menyVal == 4:
+            #rita box, obestämt
+            pygame.draw.rect(screen, (40, 40, 40), (200, 420+5+4, 860, 200))
+            pygame.draw.rect(screen, (10, 10, 10), (200+5, 420+5+5+4, 860-10, 200-10))
+            return
+        if menyVal == 5:
+            #när du är i en fight så kommer dethär ritas till skärmen
+            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+            pygame.draw.rect(screen, (40, 40, 40), (450, 429, 360, 200))
+            pygame.draw.rect(screen, (60, 60, 60), (550, 429, 160, 200))
+            pygame.draw.rect(screen, (80, 80, 80), (600, 429, 60, 200))
+
+            pygame.draw.rect(screen, (250, 250, 250), (210+fightGrej, 429, 20, 200))
 class Input:
     @staticmethod
     def Upp():
