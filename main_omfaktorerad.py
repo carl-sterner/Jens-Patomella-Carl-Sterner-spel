@@ -100,7 +100,7 @@ class UI:
                     if k == karta.monsters[l].cords:
                         if karta.monsters[l].typ == "Zombie":
                             pygame.draw.rect(screen, (0, 240, 0), (i*11+1160, j*11+10, 10, 10))
-                        elif karta.monsters[l].typ == "Spöke":
+                        elif karta.monsters[l].typ == "Varulv":
                             pygame.draw.rect(screen, (0, 0, 240), (i*11+1160, j*11+10, 10, 10))
                         elif karta.monsters[l].typ == "Drake":
                             pygame.draw.rect(screen, (240, 240, 0), (i*11+1160, j*11+10, 10, 10))
@@ -309,7 +309,8 @@ class Input:
             elif subMenyVal == 2: #om man tryckt på "Stats"
                 menyVal = 3
             elif subMenyVal == 3: #om man tryckt på "Fly"
-                menyVal = 9
+                menyVal = 0
+                gameState = 0
             subMenyVal = 0
             return
 
