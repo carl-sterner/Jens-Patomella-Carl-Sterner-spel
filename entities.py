@@ -18,13 +18,15 @@ class player:
         self.pos = pos
    
     def Move(self, direction):
-        if direction == "Norr":
+        p_y = (self.pos % 10)+1 # din y position 10 är karta.w måste bytas om karta.w ändras
+        p_x = (self.pos // 10)+1 # din x position
+        if direction == "Norr" and p_y != 1:
             self.pos -= 1
-        elif direction == "Syd":
+        elif direction == "Syd" and p_y != 10:
             self.pos += 1
-        elif direction == "Öst":
+        elif direction == "Öst" and p_x != 1:
             self.pos -= 10
-        elif direction == "Väst":
+        elif direction == "Väst" and p_x != 10:
             self.pos += 10
     
     def Pickup(self, item):
