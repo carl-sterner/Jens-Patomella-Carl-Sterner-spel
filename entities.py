@@ -1,11 +1,7 @@
-class föremål:
-    def __init__(self):
-        self.items = []
-        self.items_pos = []
-
-    def Placera(self, typ, pos):
-        self.items.append(typ)
-        self.items_pos.append(pos)
+class Föremål:
+    def __init__(self, typ, cords):
+        self.typ = typ
+        self.cords = cords
 
 class player:
     def __init__(self, hp, lvl, str, skill, pos, inventory):

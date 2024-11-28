@@ -12,21 +12,22 @@ class Karta():
         self.minMon = 21
         self.maxMon = 34
         self.monsters = []
-    
+        self.items = []
+
     def PlaceraFöremål(self):
         j = random.randint(self.minObj, self.maxObj)
-        while j > len(föremål.items_pos):
+        while len(self.items) < j:
             i = random.randint(1, 100)
-            if random.randint(0, 10) == 0:
-                if not i == player.pos and not i in föremål.items_pos:
-                    k = random.choice(["Svärd", "Sköld", "Svamp", "Potion"])
-                    föremål.Placera(k, i)
+            if not i == player.pos and not i in self.items:
+                typ = random.choice(["Äpple", "Svärd", "Potion"])
+                nyItem = Föremål(typ, i)
+                self.items.append(nyItem)
 
     def PlaceraMonster(self):
         j = random.randint(self.minMon, self.maxMon)
         while len(self.monsters) < j:
             i = random.randint(1, 100)
-            if not i == player.pos and not i in föremål.items_pos and not i in self.monsters:
+            if not i == player.pos and not i in self.items and not i in self.monsters:
                 typ = random.choice(["Zombie", "Varulv", "Drake"])
                 str = random.randint(5, 20)
                 nyaMonster = Monster(typ, str, i)
@@ -46,10 +47,12 @@ class F:
 
     @staticmethod#jeh
     def CheckForItems():
-        global gameState
-        for itemPos in föremål.items_pos:
-            if itemPos == player.pos:
-                    gameState = 2
+        global gameState, menyVal
+        for i in range(len(karta.items)):
+            if karta.items[i].cords == player.pos:
+                menyVal = 2
+                gameState = 0
+                return karta.items[i]
     
     @staticmethod
     def CheckForMonsters():
@@ -84,7 +87,6 @@ fightBoxHåll = 1
 #Skapa objekt
 player = player(10, 0, 1, 0, 45, [])
 karta = Karta(10, 10)
-föremål = föremål()
 
 class UI:
     @staticmethod
@@ -93,9 +95,14 @@ class UI:
         for i in range(karta.w):
             for j in range(karta.h):
                 pygame.draw.rect(screen, (40, 40, 40), (i*11+1160, j*11+10, 10, 10))
-                for h in föremål.items_pos:
-                    if k == h:
-                        pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+                for h in range(len(karta.items)):
+                    if k == karta.items[h].cords:
+                        if karta.items[h].typ == "Äpple":
+                            pygame.draw.rect(screen, (240, 00, 0), (i*11+1160, j*11+10, 10, 10))
+                        elif karta.items[h].typ == "Svärd":
+                            pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+                        elif karta.items[h].typ == "Potion":
+                            pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
                 for l in range(len(karta.monsters)):
                     if k == karta.monsters[l].cords:
                         if karta.monsters[l].typ == "Zombie":
@@ -113,6 +120,7 @@ class UI:
     @staticmethod
     def DrawUI(screen, font, textObjekt):
         UI.DrawMinimap(screen)
+
         #gamestate 1 är här
         if gameState == 1:
             if menyVal == 5:
@@ -180,6 +188,7 @@ class UI:
             F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
             F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
             F.PrintText(screen, font, "Obestämt", 880, 567, textObjekt)
+            
             return
 
         if menyVal == 1:
@@ -212,6 +221,7 @@ class UI:
 
         if menyVal == 2:
             #rita själva boxen
+            F.PrintText(screen, font, f"du ser {F.CheckForItems().typ}", 400, 300, textObjekt)
             pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
             
