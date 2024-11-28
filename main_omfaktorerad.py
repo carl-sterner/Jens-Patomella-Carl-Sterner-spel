@@ -27,7 +27,7 @@ class Karta():
         while len(self.monsters) < j:
             i = random.randint(1, 100)
             if not i == player.pos and not i in föremål.items_pos and not i in self.monsters:
-                typ = random.choice(["Zombie", "Spöke", "Drake"])
+                typ = random.choice(["Zombie", "Varulv", "Drake"])
                 str = random.randint(5, 20)
                 nyaMonster = Monster(typ, str, i)
                 self.monsters.append(nyaMonster)
@@ -100,7 +100,7 @@ class UI:
                     if k == karta.monsters[l].cords:
                         if karta.monsters[l].typ == "Zombie":
                             pygame.draw.rect(screen, (0, 240, 0), (i*11+1160, j*11+10, 10, 10))
-                        elif karta.monsters[l].typ == "Spöke":
+                        elif karta.monsters[l].typ == "Varulv":
                             pygame.draw.rect(screen, (0, 0, 240), (i*11+1160, j*11+10, 10, 10))
                         elif karta.monsters[l].typ == "Drake":
                             pygame.draw.rect(screen, (240, 240, 0), (i*11+1160, j*11+10, 10, 10))
@@ -125,7 +125,6 @@ class UI:
                 F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
                 F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
                 F.PrintText(screen, font, "Fly", 880, 567, textObjekt)
-                F.PrintText(screen, font, )
                 return
             if menyVal == 6:
                 #när du är i en fight så kommer dethär ritas till skärmen
@@ -309,7 +308,8 @@ class Input:
             elif subMenyVal == 2: #om man tryckt på "Stats"
                 menyVal = 3
             elif subMenyVal == 3: #om man tryckt på "Fly"
-                menyVal = 9
+                menyVal = 0
+                gameState = 0
             subMenyVal = 0
             return
 
