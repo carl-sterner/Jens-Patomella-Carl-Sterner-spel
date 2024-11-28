@@ -62,9 +62,6 @@ class F:
 
 #globala variabler
 gameState = 0
-#gameState 0 = menyval 0
-#gameState 1 = i fight
-#gameState 2 = vid item
 menyVal = 0
 #menyVal 0 = när man ser val 1-4
 #menyVal 1 = gå-meny
@@ -76,6 +73,7 @@ menyVal = 0
 #menyVal 7(gamestate 1) = inventory-meny
 #menyVal 8(gamestate 1) = obestämt
 #menyVal 9(gamestate 1) = fly från fight
+#menyVal 11 = du står vid item
 subMenyVal = 0
 #tex när du är i menyVal 1 så är subMenyVal 0 = Norr, 1 = Syd osv
 
@@ -115,15 +113,7 @@ class UI:
     @staticmethod
     def DrawUI(screen, font, textObjekt):
         UI.DrawMinimap(screen)
-        if gameState == 2:
-            F.PrintText(screen, font, "Du står vid en item", 400, 300, textObjekt)
-
-            for i in range(2):
-                pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
-                #göra outline för alla boxar förutom den man kollar på så att säga
-                if not subMenyVal == i:
-                    pygame.draw.rect(screen, (10, 10, 10), (205+(220*i), 555, 190, 70))
-            return
+        #gamestate 1 är här
         if gameState == 1:
             if menyVal == 5:
                 for i in range(4):
@@ -135,9 +125,8 @@ class UI:
                 F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
                 F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
                 F.PrintText(screen, font, "Fly", 880, 567, textObjekt)
-                F.PrintText(screen, font, f"du står vid {F.CheckForMonsters().typ}, med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
+                F.PrintText(screen, font, )
                 return
-            #gameState 1 här
             if menyVal == 6:
                 #när du är i en fight så kommer dethär ritas till skärmen
                 pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
@@ -256,7 +245,15 @@ class UI:
             pygame.draw.rect(screen, (40, 40, 40), (200, 420+5+4, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 420+5+5+4, 860-10, 200-10))
             return
-          
+        
+        if menyVal == 11:
+            F.PrintText(screen, font, "Du står vid en item", 400, 300, textObjekt)
+
+            for i in range(2):
+                pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
+                #göra outline för alla boxar förutom den man kollar på så att säga
+                if not subMenyVal == i:
+                    pygame.draw.rect(screen, (10, 10, 10), (205+(220*i), 555, 190, 70))
 class Input:
     @staticmethod
     def Upp():
@@ -312,8 +309,7 @@ class Input:
             elif subMenyVal == 2: #om man tryckt på "Stats"
                 menyVal = 3
             elif subMenyVal == 3: #om man tryckt på "Fly"
-                menyVal = 0
-                gameState = 0
+                menyVal = 9
             subMenyVal = 0
             return
 
@@ -326,11 +322,18 @@ class Input:
                 player.Move("Öst")
             if subMenyVal == 3:
                 player.Move("Väst")
-            subMenyVal = 0
         
             #kolla om gubben är i samma ruta som föremål eller monster
-            F.CheckForItems()
-            F.CheckForMonsters()
+            for itemPos in föremål.items_pos:
+                if itemPos == player.pos:
+                    print("djfaodsjfio")
+            
+            for i in range(len(karta.monsters)):
+                print("fkdafljasdlkfjasldkfjasdlkfj")
+                if karta.monsters[i].cords == player.pos:
+                    gameState = 1
+                    menyVal = 5
+                    print("d")
 
     @staticmethod
     def Tillbaka():
