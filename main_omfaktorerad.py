@@ -57,6 +57,7 @@ menyVal = 0
 #menyVal 7(gamestate 1) = inventory-meny
 #menyVal 8(gamestate 1) = obestämt
 #menyVal 9(gamestate 1) = fly från fight
+#menyVal 11 = du står vid item
 subMenyVal = 0
 #tex när du är i menyVal 1 så är subMenyVal 0 = Norr, 1 = Syd osv
 
@@ -96,7 +97,59 @@ class UI:
     def DrawUI(screen, font, textObjekt):
         UI.DrawMinimap(screen)
         if gameState == 1:
+            if menyVal == 5:
+                for i in range(4):
+                    pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
+                    #göra outline för alla boxar förutom den man kollar på så att säga
+                    if not subMenyVal == i:
+                        pygame.draw.rect(screen, (10, 10, 10), (205+(220*i), 555, 190, 70))
+
+                F.PrintText(screen, font, "Fight", 225, 567, textObjekt)
+                F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
+                F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
+                F.PrintText(screen, font, "Fly", 880, 567, textObjekt)
+                return
             #gameState 1 här
+            if menyVal == 6:
+                #när du är i en fight så kommer dethär ritas till skärmen
+                pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+                pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+                pygame.draw.rect(screen, (40, 40, 40), (450, 429, 360, 200))
+                pygame.draw.rect(screen, (60, 60, 60), (550, 429, 160, 200))
+                pygame.draw.rect(screen, (80, 80, 80), (600, 429, 60, 200))
+
+                pygame.draw.rect(screen, (250, 250, 250), (210+fightBoxen, 429, 20, 200))
+                return
+            
+            if menyVal == 7:
+                #rita box, obestämt
+                pygame.draw.rect(screen, (40, 40, 40), (200, 420+5+4, 860, 200))
+                pygame.draw.rect(screen, (10, 10, 10), (200+5, 420+5+5+4, 860-10, 200-10))
+                return
+            
+            if menyVal == 8:
+                #rita själva boxen
+                pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+                pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+                
+                #allt under här är för att räkna x,y offset(samt text) för de olika grejerna man har i inventory
+                x=0
+                y=0
+                for i in range(len(player.inventory)):
+                    F.PrintText(screen, font, str(player.inventory[i]), 250+(280*x), 449+(60*y), textObjekt)
+                    x+=1
+                    if x == 3:
+                        y+=1
+                        x=0
+                x=0
+                y=0
+                return
+            if menyVal == 9:
+                pass
+                return
+            if menyVal == 10:
+                pass
+                return
             return
         #gameState 0 här under
         if menyVal == 0:
@@ -176,43 +229,14 @@ class UI:
             pygame.draw.rect(screen, (10, 10, 10), (200+5, 420+5+5+4, 860-10, 200-10))
             return
         
-        if menyVal == 5:
-            #när du är i en fight så kommer dethär ritas till skärmen
-            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
-            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
-            pygame.draw.rect(screen, (40, 40, 40), (450, 429, 360, 200))
-            pygame.draw.rect(screen, (60, 60, 60), (550, 429, 160, 200))
-            pygame.draw.rect(screen, (80, 80, 80), (600, 429, 60, 200))
+        if menyVal == 11:
+            F.PrintText(screen, font, "Du står vid en item", 400, 300, textObjekt)
 
-            pygame.draw.rect(screen, (250, 250, 250), (210+fightBoxen, 429, 20, 200))
-            return
-        
-        if menyVal == 6:
-             #rita box, obestämt
-            pygame.draw.rect(screen, (40, 40, 40), (200, 420+5+4, 860, 200))
-            pygame.draw.rect(screen, (10, 10, 10), (200+5, 420+5+5+4, 860-10, 200-10))
-            return
-        
-        if menyVal == 7:
-            #rita själva boxen
-            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
-            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
-            
-            #allt under här är för att räkna x,y offset(samt text) för de olika grejerna man har i inventory
-            x=0
-            y=0
-            for i in range(len(player.inventory)):
-                F.PrintText(screen, font, str(player.inventory[i]), 250+(280*x), 449+(60*y), textObjekt)
-                x+=1
-                if x == 3:
-                    y+=1
-                    x=0
-            x=0
-            y=0
-            return
-        if menyVal == 8:
-            pass
-            return
+            for i in range(2):
+                pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
+                #göra outline för alla boxar förutom den man kollar på så att säga
+                if not subMenyVal == i:
+                    pygame.draw.rect(screen, (10, 10, 10), (205+(220*i), 555, 190, 70))
 class Input:
     @staticmethod
     def Upp():
@@ -342,11 +366,12 @@ class Spel:
         pygame.display.flip()
     
     def Uppdatera(self):
+        global menyVal
         #kolla om gubben är i samma ruta som föremål eller monster
         for itemPos in föremål.items_pos:
             if itemPos == player.pos:
-                print("djfaodsjfio")
-
+                menyVal = 11
+        
 
     def Kör(self):
         karta.PlaceraFöremål()
