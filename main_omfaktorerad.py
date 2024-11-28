@@ -27,7 +27,7 @@ class Karta():
         while len(self.monsters) < j:
             i = random.randint(1, 100)
             if not i == player.pos and not i in föremål.items_pos and not i in self.monsters:
-                typ = random.choice(["Zombie", "Spöke", "Drake"])
+                typ = random.choice(["Zombie", "Varulv", "Drake"])
                 str = random.randint(5, 20)
                 nyaMonster = Monster(typ, str, i)
                 self.monsters.append(nyaMonster)
@@ -125,7 +125,7 @@ class UI:
                 F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
                 F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
                 F.PrintText(screen, font, "Fly", 880, 567, textObjekt)
-                F.PrintText(screen, font, )
+                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} stryka", 400, 300, textObjekt)
                 return
             if menyVal == 6:
                 #när du är i en fight så kommer dethär ritas till skärmen
