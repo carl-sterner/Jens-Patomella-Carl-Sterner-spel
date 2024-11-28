@@ -63,6 +63,7 @@ subMenyVal = 0
 
 #variabler för när du är i en fight
 fightBoxen = 0 #själva offsetten för boxen
+fightBoxHåll = 1
 
 #Skapa objekt
 player = player(10, 0, 1, 0, 45, [])
@@ -298,26 +299,25 @@ class Input:
         if menyVal == 1:
             if subMenyVal == 0:
                 player.Move("Norr")
-                return
             if subMenyVal == 1:
                 player.Move("Syd")
-                return
             if subMenyVal == 2:
                 player.Move("Öst")
-                return
             if subMenyVal == 3:
                 player.Move("Väst")
-                return
         
-        #kolla om gubben är i samma ruta som föremål eller monster
-        for itemPos in föremål.items_pos:
-            if itemPos == player.pos:
-                print("djfaodsjfio")
-        
-        for i in range(len(karta.monsters)):
-            if karta.monsters[i].cords == player.pos:
-                gameState = 1
-                menyVal = 5
+            #kolla om gubben är i samma ruta som föremål eller monster
+            for itemPos in föremål.items_pos:
+                if itemPos == player.pos:
+                    print("djfaodsjfio")
+            
+            for i in range(len(karta.monsters)):
+                print("fkdafljasdlkfjasldkfjasdlkfj")
+                if karta.monsters[i].cords == player.pos:
+                    gameState = 1
+                    menyVal = 5
+                    print("d")
+
     @staticmethod
     def Tillbaka():
         global menyVal, subMenyVal
@@ -386,13 +386,16 @@ class Spel:
         pygame.display.flip()
     
     def Uppdatera(self):
-        global menyVal
-        #kolla om gubben är i samma ruta som föremål eller monster
-        for itemPos in föremål.items_pos:
-            if itemPos == player.pos:
-                menyVal = 11
-        
+        global fightBoxHåll, fightBoxen
+        if menyVal == 6: #om du är i fight
+            #rörelse fram och tillbaka
+            if fightBoxen > 825:
+                fightBoxHåll = -1
+            elif fightBoxen < 0:
+                fightBoxHåll = 1
+            fightBoxen += 7*fightBoxHåll
 
+        
     def Kör(self):
         karta.PlaceraFöremål()
         karta.PlaceraMonster()
