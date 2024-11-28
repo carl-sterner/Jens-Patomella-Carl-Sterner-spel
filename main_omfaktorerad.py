@@ -125,7 +125,7 @@ class UI:
                 F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
                 F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
                 F.PrintText(screen, font, "Fly", 880, 567, textObjekt)
-                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} stryka", 400, 300, textObjekt)
+                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
                 return
             if menyVal == 6:
                 #när du är i en fight så kommer dethär ritas till skärmen
@@ -325,16 +325,8 @@ class Input:
                 player.Move("Väst")
         
             #kolla om gubben är i samma ruta som föremål eller monster
-            for itemPos in föremål.items_pos:
-                if itemPos == player.pos:
-                    print("djfaodsjfio")
-            
-            for i in range(len(karta.monsters)):
-                print("fkdafljasdlkfjasldkfjasdlkfj")
-                if karta.monsters[i].cords == player.pos:
-                    gameState = 1
-                    menyVal = 5
-                    print("d")
+            F.CheckForItems()
+            F.CheckForMonsters()
 
     @staticmethod
     def Tillbaka():
