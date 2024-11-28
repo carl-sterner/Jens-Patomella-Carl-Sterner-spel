@@ -44,7 +44,7 @@ class F:
     def ClearText(textObjekt):
         textObjekt.clear()
 
-    @staticmethod
+    @staticmethod#jeh
     def CheckForItems():
         global gameState
         for itemPos in föremål.items_pos:
