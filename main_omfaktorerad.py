@@ -22,7 +22,7 @@ class Karta():
                 typ = random.choice(["Äpple", "Svärd", "Potion"])
                 nyItem = Föremål(typ, i)
                 self.items.append(nyItem)
-
+    
     def PlaceraMonster(self):
         j = random.randint(self.minMon, self.maxMon)
         while len(self.monsters) < j:
@@ -50,8 +50,7 @@ class F:
         global gameState, menyVal
         for i in range(len(karta.items)):
             if karta.items[i].cords == player.pos:
-                menyVal = 2
-                gameState = 0
+                gameState = 2
                 return karta.items[i]
     
     @staticmethod
@@ -65,6 +64,7 @@ class F:
 
 #globala variabler
 gameState = 0
+#gameState 2 = vid item
 menyVal = 0
 #menyVal 0 = när man ser val 1-4
 #menyVal 1 = gå-meny
@@ -120,6 +120,13 @@ class UI:
     @staticmethod
     def DrawUI(screen, font, textObjekt):
         UI.DrawMinimap(screen)
+
+        if gameState == 2:
+            #rita själva boxen
+            F.PrintText(screen, font, f"du ser {F.CheckForItems().typ}", 400, 300, textObjekt)
+            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+            return
 
         #gamestate 1 är här
         if gameState == 1:
@@ -221,7 +228,6 @@ class UI:
 
         if menyVal == 2:
             #rita själva boxen
-            F.PrintText(screen, font, f"du ser {F.CheckForItems().typ}", 400, 300, textObjekt)
             pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
             pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
             
