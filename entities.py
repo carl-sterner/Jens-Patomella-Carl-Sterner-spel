@@ -31,6 +31,21 @@ class player:
     def levelup(self, amount):
         self.lvl += amount
 
+    def Attack(self, fightBoxPos, monster):
+        boost = 0
+        if fightBoxPos+210 >= 205 and fightBoxPos+210 <= 205+850:
+            if fightBoxPos+210 >= 450 and fightBoxPos+210 <= 450+360:
+                if fightBoxPos+210 >= 550 and fightBoxPos+210 <= 550+160:
+                    if fightBoxPos+210 >= 600 and fightBoxPos+210 <= 600+60:
+                        boost = 1.3
+                    boost = 1.2
+                boost = 1.1
+            boost = 1
+        if self.str * boost > monster.str:
+            return 1
+        else:
+            return 0
+
 class Monster:
     def __init__(self, typ, str, cords):
         self.typ = typ

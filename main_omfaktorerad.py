@@ -85,7 +85,7 @@ fightBoxPos = 0 #själva offsetten för boxen
 fightBoxHåll = 1
 
 #Skapa objekt
-player = player(10, 0, 1, 0, 45, [])
+player = player(10, 0, 50, 0, 45, ["Svärd"])
 karta = Karta(10, 10)
 
 class UI:
@@ -343,6 +343,16 @@ class Input:
             #kolla om gubben är i samma ruta som föremål eller monster
             F.CheckForItems()
             F.CheckForMonsters()
+
+        if menyVal == 6:
+            if player.Attack(fightBoxPos, F.CheckForMonsters()) == 1:
+                # du vann
+                gameState = 0
+                menyVal = 0
+                print("du vann ")
+            else:
+                gameState = 0
+                print("du förolarad e")
 
     @staticmethod
     def Tillbaka():
