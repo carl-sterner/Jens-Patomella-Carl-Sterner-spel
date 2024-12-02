@@ -81,7 +81,7 @@ subMenyVal = 0
 #tex när du är i menyVal 1 så är subMenyVal 0 = Norr, 1 = Syd osv
 
 #variabler för när du är i en fight
-fightBoxen = 0 #själva offsetten för boxen
+fightBoxPos = 0 #själva offsetten för boxen
 fightBoxHåll = 1
 
 #Skapa objekt
@@ -150,7 +150,7 @@ class UI:
                 pygame.draw.rect(screen, (60, 60, 60), (550, 429, 160, 200))
                 pygame.draw.rect(screen, (80, 80, 80), (600, 429, 60, 200))
 
-                pygame.draw.rect(screen, (250, 250, 250), (210+fightBoxen, 429, 20, 200))
+                pygame.draw.rect(screen, (250, 250, 250), (210+fightBoxPos, 429, 20, 200))
                 return
             
             if menyVal == 7:
@@ -412,14 +412,14 @@ class Spel:
         pygame.display.flip()
     
     def Uppdatera(self):
-        global fightBoxHåll, fightBoxen
+        global fightBoxHåll, fightBoxPos
         if menyVal == 6: #om du är i fight
             #rörelse fram och tillbaka
-            if fightBoxen > 825:
+            if fightBoxPos > 825:
                 fightBoxHåll = -1
-            elif fightBoxen < 0:
+            elif fightBoxPos < 0:
                 fightBoxHåll = 1
-            fightBoxen += 7*fightBoxHåll
+            fightBoxPos += 7*fightBoxHåll
 
         
     def Kör(self):
