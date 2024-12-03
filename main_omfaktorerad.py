@@ -93,10 +93,10 @@ fightBoxPos = 0 #själva offsetten för boxen
 fightBoxHåll = 1
 
 #om du förloared figth
-förloradeFight = False
+fightresultat = 0
 
 #Skapa objekt
-player = player(10, 0, 1, 0, 45, ["Svärd"])
+player = player(10, 0, 20, 0, 45, ["Svärd"])
 karta = Karta(10, 10)
 
 class UI:
@@ -327,7 +327,7 @@ class Input:
 
     @staticmethod
     def Enter():
-        global menyVal, subMenyVal, gameState, förloradeFight
+        global menyVal, subMenyVal, gameState, fightresultat
         #i vanliga menyn
         if menyVal == 0:
             if subMenyVal == 0: #om man tryckt på "Gå"
@@ -356,7 +356,7 @@ class Input:
             return
 
         if menyVal == 1:
-            förloradeFight = False
+            fightresultat = 0
 
             if subMenyVal == 0:
                 player.Move("Norr")
@@ -374,6 +374,8 @@ class Input:
         if menyVal == 6:
             if player.Attack(fightBoxPos, F.CheckForMonsters()) == 1:
                 # du vann
+                player.levelup(1)
+                fightresultat = 2
                 gameState = 0
                 menyVal = 0
                 monsterPos = F.CheckForMonsters().cords
@@ -383,7 +385,7 @@ class Input:
                         karta.monsters.pop(i)
             else:
                 player.hp -= 1
-                förloradeFight = True
+                fightresultat = 1
                 gameState = 0
                 menyVal = 0
 
@@ -450,9 +452,12 @@ class Spel:
         self.screen.fill((10, 10, 10))
         
         UI.DrawUI(self.screen, self.font, self.textObjekter)
-        if förloradeFight:
+        if fightresultat == 1:
             F.PrintText(self.screen, self.font, "Du förlorade fighten", 400, 260, self.textObjekter)
             F.PrintText(self.screen, self.font, "Du har tappat 1 hp", 400, 300, self.textObjekter)
+        if fightresultat == 2:
+            F.PrintText(self.screen, self.font, "Du vann fighten", 400, 260, self.textObjekter)
+            F.PrintText(self.screen, self.font, "Du har gått upp en level", 400, 300, self.textObjekter)
         #uppdatera skärmen
         pygame.display.flip()
     
