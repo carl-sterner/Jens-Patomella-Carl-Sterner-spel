@@ -327,7 +327,7 @@ class Input:
 
     @staticmethod
     def Enter():
-        global menyVal, subMenyVal, gameState
+        global menyVal, subMenyVal, gameState, förloradeFight
         #i vanliga menyn
         if menyVal == 0:
             if subMenyVal == 0: #om man tryckt på "Gå"
@@ -356,6 +356,8 @@ class Input:
             return
 
         if menyVal == 1:
+            förloradeFight = False
+
             if subMenyVal == 0:
                 player.Move("Norr")
             if subMenyVal == 1:
@@ -381,7 +383,6 @@ class Input:
                         karta.monsters.pop(i)
             else:
                 player.hp -= 1
-                global förloradeFight
                 förloradeFight = True
                 gameState = 0
                 menyVal = 0
@@ -462,10 +463,6 @@ class Spel:
             elif fightBoxPos < 0:
                 fightBoxHåll = 1
             fightBoxPos += 7*fightBoxHåll
-        
-        if förloradeFight:
-            print("fkdjalkfjalskdfjksldajfkl")
-            F.PrintText(self.screen, self.font, "du tappade 1 hp", 400, 300, self.textObjekter)
         
     def Kör(self):
         karta.PlaceraFöremål()
