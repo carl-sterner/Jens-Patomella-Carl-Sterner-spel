@@ -56,16 +56,13 @@ class F:
     
     @staticmethod
     def CheckForMonsters():
-        try:
-            global gameState, menyVal
-            for i in range(len(karta.monsters)):
-                if karta.monsters[i].cords == player.pos:
-                    if gameState != 1:
-                        gameState = 1
-                        menyVal = 5
-                    return karta.monsters[i]
-        except:
-            return False
+        global gameState, menyVal
+        for i in range(len(karta.monsters)):
+            if karta.monsters[i].cords == player.pos:
+                if gameState != 1:
+                    gameState = 1
+                    menyVal = 5
+                return karta.monsters[i]
 
 #globala variabler
 gameState = 0
@@ -93,10 +90,10 @@ fightBoxPos = 0 #själva offsetten för boxen
 fightBoxHåll = 1
 
 #om du förloared figth
-förloradeFight = False
+fightresultat = 0
 
 #Skapa objekt
-player = player(10, 0, 1, 0, 45, ["Svärd"])
+player = player(10, 0, 20, 0, 45, ["Svärd"])
 karta = Karta(10, 10)
 
 class UI:
@@ -143,7 +140,10 @@ class UI:
 
         #gamestate 1 är här
         if gameState == 1:
-            F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
+            try:
+                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
+            except:
+                return
             if menyVal == 5:
                 for i in range(4):
                     pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
@@ -327,7 +327,7 @@ class Input:
 
     @staticmethod
     def Enter():
-        global menyVal, subMenyVal, gameState, förloradeFight
+        global menyVal, subMenyVal, gameState, fightresultat
         #i vanliga menyn
         if menyVal == 0:
             if subMenyVal == 0: #om man tryckt på "Gå"
@@ -356,7 +356,7 @@ class Input:
             return
 
         if menyVal == 1:
-            förloradeFight = False
+            fightresultat = 0
 
             if subMenyVal == 0:
                 player.Move("Norr")
@@ -374,6 +374,8 @@ class Input:
         if menyVal == 6:
             if player.Attack(fightBoxPos, F.CheckForMonsters()) == 1:
                 # du vann
+                player.levelup(1)
+                fightresultat = 2
                 gameState = 0
                 menyVal = 0
                 monsterPos = F.CheckForMonsters().cords
@@ -383,7 +385,7 @@ class Input:
                         karta.monsters.pop(i)
             else:
                 player.hp -= 1
-                förloradeFight = True
+                fightresultat = 1
                 gameState = 0
                 menyVal = 0
 
@@ -450,9 +452,12 @@ class Spel:
         self.screen.fill((10, 10, 10))
         
         UI.DrawUI(self.screen, self.font, self.textObjekter)
-        if förloradeFight:
+        if fightresultat == 1:
             F.PrintText(self.screen, self.font, "Du förlorade fighten", 400, 260, self.textObjekter)
             F.PrintText(self.screen, self.font, "Du har tappat 1 hp", 400, 300, self.textObjekter)
+        if fightresultat == 2:
+            F.PrintText(self.screen, self.font, "Du vann fighten", 400, 260, self.textObjekter)
+            F.PrintText(self.screen, self.font, "Du har gått upp en level", 400, 300, self.textObjekter)
         #uppdatera skärmen
         pygame.display.flip()
     
