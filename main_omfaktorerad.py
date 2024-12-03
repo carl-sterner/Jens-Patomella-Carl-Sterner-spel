@@ -1,6 +1,7 @@
 import pygame
 from entities import *
 import random
+from time import sleep
 
 class Karta():
     def __init__(self, w, h):
@@ -55,16 +56,23 @@ class F:
     
     @staticmethod
     def CheckForMonsters():
-        global gameState, menyVal
-        for i in range(len(karta.monsters)):
-            if karta.monsters[i].cords == player.pos:
-                gameState = 1
-                menyVal = 5
-                return karta.monsters[i]
+        try:
+            global gameState, menyVal
+            for i in range(len(karta.monsters)):
+                if karta.monsters[i].cords == player.pos:
+                    if gameState != 1:
+                        gameState = 1
+                        menyVal = 5
+                    return karta.monsters[i]
+        except:
+            return False
 
 #globala variabler
 gameState = 0
+#gameState 0 = vanlig meny
+#gameState 1 = i en fight
 #gameState 2 = vid item
+#gameState 3 = du är död
 menyVal = 0
 #menyVal 0 = när man ser val 1-4
 #menyVal 1 = gå-meny
@@ -84,8 +92,11 @@ subMenyVal = 0
 fightBoxPos = 0 #själva offsetten för boxen
 fightBoxHåll = 1
 
+#om du förloared figth
+förloradeFight = False
+
 #Skapa objekt
-player = player(10, 0, 50, 0, 45, ["Svärd"])
+player = player(10, 0, 1, 0, 45, ["Svärd"])
 karta = Karta(10, 10)
 
 class UI:
@@ -119,7 +130,9 @@ class UI:
 
     @staticmethod
     def DrawUI(screen, font, textObjekt):
-        UI.DrawMinimap(screen)
+        if gameState == 3:
+            F.PrintText(screen, font, "Du är död", 400, 200, textObjekt)
+            return
 
         if gameState == 2:
             #rita själva boxen
@@ -130,6 +143,7 @@ class UI:
 
         #gamestate 1 är här
         if gameState == 1:
+            F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
             if menyVal == 5:
                 for i in range(4):
                     pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
@@ -140,7 +154,6 @@ class UI:
                 F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
                 F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
                 F.PrintText(screen, font, "Fly", 880, 567, textObjekt)
-                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
                 return
             if menyVal == 6:
                 #när du är i en fight så kommer dethär ritas till skärmen
@@ -154,12 +167,7 @@ class UI:
                 return
             
             if menyVal == 7:
-                #rita box, obestämt
-                pygame.draw.rect(screen, (40, 40, 40), (200, 420+5+4, 860, 200))
-                pygame.draw.rect(screen, (10, 10, 10), (200+5, 420+5+5+4, 860-10, 200-10))
-                return
-            
-            if menyVal == 8:
+
                 #rita själva boxen
                 pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
                 pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
@@ -176,6 +184,19 @@ class UI:
                 x=0
                 y=0
                 return
+            
+            if menyVal == 8:
+                #rita box och stats
+                pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
+                pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+                F.PrintText(screen, font, f"x, y: {(player.pos % karta.w)+1}, {(player.pos // karta.w)+1}", 230, 450, textObjekt)
+                F.PrintText(screen, font, f"rum: {player.pos}", 230, 500, textObjekt)
+                F.PrintText(screen, font, f"str: {player.str}", 230, 550, textObjekt)
+                F.PrintText(screen, font, f"lvl: {player.lvl}", 530, 450, textObjekt)
+                F.PrintText(screen, font, f"skill: {player.skill}", 530, 500, textObjekt)
+                F.PrintText(screen, font, f"hp: {player.hp}", 530, 550, textObjekt)
+                return
+
             if menyVal == 9:
                 pass
                 return
@@ -184,6 +205,7 @@ class UI:
                 return
             return
         #gameState 0 här under
+        UI.DrawMinimap(screen)
         if menyVal == 0:
             for i in range(4):
                 pygame.draw.rect(screen, (80, 80, 80), (200+(220*i), 550, 200, 80))
@@ -270,6 +292,7 @@ class UI:
                 #göra outline för alla boxar förutom den man kollar på så att säga
                 if not subMenyVal == i:
                     pygame.draw.rect(screen, (10, 10, 10), (205+(220*i), 555, 190, 70))
+
 class Input:
     @staticmethod
     def Upp():
@@ -305,6 +328,7 @@ class Input:
     @staticmethod
     def Enter():
         global menyVal, subMenyVal, gameState
+        #i vanliga menyn
         if menyVal == 0:
             if subMenyVal == 0: #om man tryckt på "Gå"
                 menyVal = 1
@@ -317,13 +341,14 @@ class Input:
             subMenyVal = 0
             return
         
+        #i fightmenyn
         if menyVal == 5:
             if subMenyVal == 0: #om man tryckt på "Fight"
                 menyVal = 6
             elif subMenyVal == 1: #om man tryckt på "Inventory"
-                menyVal = 2
+                menyVal = 7
             elif subMenyVal == 2: #om man tryckt på "Stats"
-                menyVal = 3
+                menyVal = 8
             elif subMenyVal == 3: #om man tryckt på "Fly"
                 menyVal = 0
                 gameState = 0
@@ -339,7 +364,7 @@ class Input:
                 player.Move("Öst")
             if subMenyVal == 3:
                 player.Move("Väst")
-        
+          
             #kolla om gubben är i samma ruta som föremål eller monster
             F.CheckForItems()
             F.CheckForMonsters()
@@ -349,10 +374,17 @@ class Input:
                 # du vann
                 gameState = 0
                 menyVal = 0
-                print("du vann ")
+                monsterPos = F.CheckForMonsters().cords
+                for monster in karta.monsters:
+                    if monster.cords == monsterPos:
+                        i = karta.monsters.index(monster)
+                        karta.monsters.pop(i)
             else:
+                player.hp -= 1
+                global förloradeFight
+                förloradeFight = True
                 gameState = 0
-                print("du förolarad e")
+                menyVal = 0
 
     @staticmethod
     def Tillbaka():
@@ -422,7 +454,7 @@ class Spel:
         pygame.display.flip()
     
     def Uppdatera(self):
-        global fightBoxHåll, fightBoxPos
+        global fightBoxHåll, fightBoxPos, förloradeFight
         if menyVal == 6: #om du är i fight
             #rörelse fram och tillbaka
             if fightBoxPos > 825:
@@ -430,7 +462,10 @@ class Spel:
             elif fightBoxPos < 0:
                 fightBoxHåll = 1
             fightBoxPos += 7*fightBoxHåll
-
+        
+        if förloradeFight:
+            print("fkdjalkfjalskdfjksldajfkl")
+            F.PrintText(self.screen, self.font, "du tappade 1 hp", 400, 300, self.textObjekter)
         
     def Kör(self):
         karta.PlaceraFöremål()
