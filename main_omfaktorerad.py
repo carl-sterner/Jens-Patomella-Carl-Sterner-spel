@@ -450,7 +450,9 @@ class Spel:
         self.screen.fill((10, 10, 10))
         
         UI.DrawUI(self.screen, self.font, self.textObjekter)
-
+        if förloradeFight:
+            F.PrintText(self.screen, self.font, "Du förlorade fighten", 400, 260, self.textObjekter)
+            F.PrintText(self.screen, self.font, "Du har tappat 1 hp", 400, 300, self.textObjekter)
         #uppdatera skärmen
         pygame.display.flip()
     
@@ -463,6 +465,8 @@ class Spel:
             elif fightBoxPos < 0:
                 fightBoxHåll = 1
             fightBoxPos += 7*fightBoxHåll
+        
+        
         
     def Kör(self):
         karta.PlaceraFöremål()
