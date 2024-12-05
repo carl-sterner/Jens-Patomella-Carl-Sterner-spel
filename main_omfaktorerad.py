@@ -372,15 +372,15 @@ class Input:
             F.CheckForMonsters()
 
         if menyVal == 6:
+            global fightBoxPos
             if player.Attack(fightBoxPos, F.CheckForMonsters()) == 1:
                 # du vann
                 player.levelup(1)
                 fightresultat = 2
                 gameState = 0
                 menyVal = 0
-                monsterPos = F.CheckForMonsters().cords
                 for monster in karta.monsters:
-                    if monster.cords == monsterPos:
+                    if monster.cords == player.pos:
                         i = karta.monsters.index(monster)
                         karta.monsters.pop(i)
             else:
@@ -388,6 +388,7 @@ class Input:
                 fightresultat = 1
                 gameState = 0
                 menyVal = 0
+            fightBoxPos = 0
 
     @staticmethod
     def Tillbaka():
