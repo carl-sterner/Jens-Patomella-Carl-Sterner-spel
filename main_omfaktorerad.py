@@ -1,7 +1,7 @@
 import pygame
 from entities import *
 import random
-from time import sleep
+import spara
 
 class Karta():
     def __init__(self, w, h):
@@ -15,7 +15,13 @@ class Karta():
         self.monsters = []
         self.items = []
 
-    def PlaceraFöremål(self):
+    def PlaceraFöremål(self, data):
+        if data != None:
+            for item in data:
+                nyItem = Föremål(item[0], item[1])
+                self.items.append(nyItem)
+            return
+
         j = random.randint(self.minObj, self.maxObj)
         while len(self.items) < j:
             i = random.randint(1, 100)
@@ -24,7 +30,13 @@ class Karta():
                 nyItem = Föremål(typ, i)
                 self.items.append(nyItem)
     
-    def PlaceraMonster(self):
+    def PlaceraMonster(self, data):
+        if data != None:
+            for monster in data:
+                print(monster)
+                nyMonster = Monster(monster[0], monster[1], monster[2])
+                self.monsters.append(nyMonster)
+            return
         j = random.randint(self.minMon, self.maxMon)
         while len(self.monsters) < j:
             i = random.randint(1, 100)
@@ -440,6 +452,9 @@ class Spel:
     def Input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                
+                print("exporterat data") if spara.Spara(karta.items, karta.monsters, player) == 0 else "fel med export"
+
                 pygame.quit()
                 exit()
 
@@ -498,8 +513,38 @@ class Spel:
             fightBoxPos += 7*fightBoxHåll
         
     def Kör(self):
-        karta.PlaceraFöremål()
-        karta.PlaceraMonster()
+        #ladda in information
+        information = spara.Läs()
+        if information != None:
+            try:
+                i = information.splitlines()
+                player.skill = int(i[-1])
+                player.lvl = int(i[-2])
+                player.hp = int(i[-3])
+                player.str = int(i[-4])
+                player.pos = int(i[-5])
+
+                numInventory = int(i[1])
+                numItems = int(i[int(i[1])+3])*2
+                numMonsters = int(i[int(i[1])+5 + numItems])*3
+                
+                items = []
+                monsters = []
+                for k in range(0, int(numInventory), 1):
+                    player.inventory.append(str(i[int[1]+1+k]))
+                for k in range(0, int(numItems), 2):
+                    items.append((str(i[int(i[1])+1+3+k]), int(i[int(i[1])+1+3+k+1])))
+                for k in range(0, int(numMonsters), 3):
+                    print("1")
+                    monsters.append((str(i[int(i[1])+5 + numItems+1+k]), int(i[int(i[1])+5 + numItems+2+k]), int(i[int(i[1])+5 + numItems+3+k])))
+                karta.PlaceraFöremål(items)
+                karta.PlaceraMonster(monsters)
+            except Exception as e:
+                print(f"fel med inladding av information till kartan: {e}")
+        else:
+            karta.PlaceraFöremål(None)
+            karta.PlaceraMonster(None)
+
         while self.running:
             self.Input()
             self.Uppdatera()
