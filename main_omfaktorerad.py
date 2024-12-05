@@ -48,7 +48,7 @@ class F:
 
     @staticmethod#jeh
     def CheckForItems():
-        global gameState, menyVal
+        global gameState, menyVal, subMenyVal
         for i in range(len(karta.items)):
             if karta.items[i].cords == player.pos:
                 gameState = 2
@@ -93,7 +93,7 @@ fightBoxHåll = 1
 fightresultat = 0
 
 #Skapa objekt
-player = player(10, 0, 20, 0, 45, ["Svärd"])
+player = player(10, 0, 20, 0, 45, [])
 karta = Karta(10, 10)
 
 class UI:
@@ -134,8 +134,15 @@ class UI:
         if gameState == 2:
             #rita själva boxen
             F.PrintText(screen, font, f"du ser {F.CheckForItems().typ}", 400, 300, textObjekt)
-            pygame.draw.rect(screen, (40, 40, 40), (200, 429, 860, 200))
-            pygame.draw.rect(screen, (10, 10, 10), (205, 434, 850, 190))
+
+            for i in range(2):
+                pygame.draw.rect(screen, (80, 80, 80), (450+(220*i), 550, 200, 80))
+                #göra outline för alla boxar förutom den man kollar på så att säga
+                if not subMenyVal == i:
+                    pygame.draw.rect(screen, (10, 10, 10), (455+(220*i), 555, 190, 70))
+            
+            F.PrintText(screen, font, "Plocka Upp", 460, 565, textObjekt)
+            F.PrintText(screen, font, "Lämna", 680, 565, textObjekt)
             return
 
         #gamestate 1 är här
@@ -256,8 +263,8 @@ class UI:
             #allt under här är för att räkna x,y offset(samt text) för de olika grejerna man har i inventory
             x=0
             y=0
-            for i in range(len(player.inventory)):
-                F.PrintText(screen, font, str(player.inventory[i]), 250+(280*x), 449+(60*y), textObjekt)
+            for item in player.inventory:
+                F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
@@ -308,7 +315,10 @@ class Input:
 
     @staticmethod
     def Höger():
-        global menyVal, subMenyVal
+        global menyVal, subMenyVal, gameState
+        if gameState == 2:
+            subMenyVal = 1
+            return
         if menyVal == 0 or menyVal == 5:
             if subMenyVal != 3:
                 subMenyVal += 1
@@ -318,7 +328,10 @@ class Input:
 
     @staticmethod
     def Vänster():
-        global menyVal, subMenyVal
+        global menyVal, subMenyVal, gameState
+        if gameState == 2:
+            subMenyVal = 0
+            return
         if menyVal == 0 or menyVal == 5:
             if subMenyVal != 0:
                 subMenyVal -= 1
@@ -328,6 +341,17 @@ class Input:
     @staticmethod
     def Enter():
         global menyVal, subMenyVal, gameState, fightresultat
+        if gameState == 2:
+            if subMenyVal == 0: # du tryckt på plocka upp
+                föremål = F.CheckForItems()
+                player.Pickup(föremål)
+                index = karta.items.index(föremål)
+                karta.items.pop(index)
+            gameState = 0
+            menyVal = 0
+            
+            return
+
         #i vanliga menyn
         if menyVal == 0:
             if subMenyVal == 0: #om man tryckt på "Gå"
@@ -368,7 +392,8 @@ class Input:
                 player.Move("Väst")
           
             #kolla om gubben är i samma ruta som föremål eller monster
-            F.CheckForItems()
+            if F.CheckForItems() != None:
+                subMenyVal = 0
             F.CheckForMonsters()
 
         if menyVal == 6:
@@ -471,8 +496,6 @@ class Spel:
             elif fightBoxPos < 0:
                 fightBoxHåll = 1
             fightBoxPos += 7*fightBoxHåll
-        
-        
         
     def Kör(self):
         karta.PlaceraFöremål()
