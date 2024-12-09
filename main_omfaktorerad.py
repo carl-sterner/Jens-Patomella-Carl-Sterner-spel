@@ -33,7 +33,6 @@ class Karta():
     def PlaceraMonster(self, data):
         if data != None:
             for monster in data:
-                print(monster)
                 nyMonster = Monster(monster[0], monster[1], monster[2])
                 self.monsters.append(nyMonster)
             return
@@ -276,7 +275,7 @@ class UI:
             x=0
             y=0
             for item in player.inventory:
-                F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
+                F.PrintText(screen, font, item, 250+(280*x), 449+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
@@ -516,31 +515,64 @@ class Spel:
         #ladda in information
         information = spara.Läs()
         if information != None:
-            try:
-                i = information.splitlines()
-                player.skill = int(i[-1])
-                player.lvl = int(i[-2])
-                player.hp = int(i[-3])
-                player.str = int(i[-4])
-                player.pos = int(i[-5])
+            i = information.splitlines()
+            player.skill = int(i[-1])
+            player.lvl = int(i[-2])
+            player.hp = int(i[-3])
+            player.str = int(i[-4])
+            player.pos = int(i[-5])
 
-                numInventory = int(i[1])
-                numItems = int(i[int(i[1])+3])*2
-                numMonsters = int(i[int(i[1])+5 + numItems])*3
-                
-                items = []
-                monsters = []
-                for k in range(0, int(numInventory), 1):
-                    player.inventory.append(str(i[int[1]+1+k]))
-                for k in range(0, int(numItems), 2):
-                    items.append((str(i[int(i[1])+1+3+k]), int(i[int(i[1])+1+3+k+1])))
-                for k in range(0, int(numMonsters), 3):
-                    print("1")
-                    monsters.append((str(i[int(i[1])+5 + numItems+1+k]), int(i[int(i[1])+5 + numItems+2+k]), int(i[int(i[1])+5 + numItems+3+k])))
-                karta.PlaceraFöremål(items)
-                karta.PlaceraMonster(monsters)
-            except Exception as e:
-                print(f"fel med inladding av information till kartan: {e}")
+            items = []
+            monsters = []
+            appendObj = ""
+            count = 2
+            tT = []
+            for line in i:
+                if appendObj == "Player":
+                    if not line == "-----ITEMS I VÄRLDEN":
+                        player.inventory.append(line)
+                elif appendObj == "Items":
+                    if count == 2:
+                        tT.append(line)
+                        count = 1
+                    else:
+                        count = 2
+                        tT.append(int(line))
+                        items.append(tT)
+                        tT = []
+                elif appendObj == "Monster":
+                    if count == 3:
+                        tT.append(line)
+                        count = 2
+                    elif count == 2:
+                        tT.append(int(line))
+                        count = 1
+                    else:
+                        count = 3
+                        tT.append(int(line))
+                        monsters.append(tT)
+                        tT = []
+                elif appendObj == "Spelare":
+                    pass
+                if line == "-----INVENTORY":
+                    appendObj = "Player"
+                if line == "-----ITEMS I VÄRLDEN":
+                    tT = []
+                    appendObj = "Items"
+                    count = 2
+                elif line == "-----MONSTER I VÄRLDEN":
+                    tT = []
+                    appendObj = "Monster"
+                    count = 3
+                elif line == "-----SPELARE":
+                    appendObj = "Spelare"
+                    count = 1
+                    tT = []
+
+            print(monsters)
+            karta.PlaceraFöremål(items)
+            karta.PlaceraMonster(monsters)
+            
         else:
             karta.PlaceraFöremål(None)
             karta.PlaceraMonster(None)

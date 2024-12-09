@@ -20,16 +20,13 @@ def Spara(items, monsters, player):
         with open("export.txt", "w", encoding="utf-8") as file:
             file.write("-----INVENTORY" + "\n")
             inv = player.inventory
-            file.write(str(len(inv))+"\n")
             for item in inv:
                 file.write(str(item.typ)+"\n")
             file.write("-----ITEMS I VÄRLDEN" + "\n")
-            file.write(str(len(items)) + "\n")
             for item in items:
                 file.write(str(item.typ) + "\n")
                 file.write(str(item.cords) + "\n")
             file.write("-----MONSTER I VÄRLDEN" + "\n")
-            file.write(str(len(monsters)) + "\n")
             for monster in monsters:
                 file.write(str(monster.typ) + "\n")
                 file.write(str(monster.str) + "\n")
