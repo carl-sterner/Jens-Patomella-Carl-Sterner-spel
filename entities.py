@@ -10,7 +10,7 @@ class player:
         self.str = str
         self.skill = skill
         self.inventory = inventory
-        self.maxItems = 9
+        self.maxItems = 5
         self.pos = pos
    
     def Move(self, direction):
