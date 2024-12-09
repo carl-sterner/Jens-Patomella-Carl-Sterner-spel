@@ -144,7 +144,7 @@ class UI:
 
         if gameState == 2:
             #rita själva boxen
-            F.PrintText(screen, font, f"du ser {F.CheckForItems().typ}", 400, 300, textObjekt)
+            F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ}", 400, 300, textObjekt)
 
             for i in range(2):
                 pygame.draw.rect(screen, (80, 80, 80), (450+(220*i), 550, 200, 80))
