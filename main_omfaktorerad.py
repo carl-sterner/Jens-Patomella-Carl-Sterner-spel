@@ -193,8 +193,8 @@ class UI:
                 #allt under här är för att räkna x,y offset(samt text) för de olika grejerna man har i inventory
                 x=0
                 y=0
-                for i in range(len(player.inventory)):
-                    F.PrintText(screen, font, str(player.inventory[i]), 250+(280*x), 449+(60*y), textObjekt)
+                for item in player.inventory:
+                    F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
                     x+=1
                     if x == 3:
                         y+=1
@@ -275,7 +275,7 @@ class UI:
             x=0
             y=0
             for item in player.inventory:
-                F.PrintText(screen, font, item, 250+(280*x), 449+(60*y), textObjekt)
+                F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
