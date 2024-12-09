@@ -26,6 +26,8 @@ class player:
             self.pos += 10
     
     def Pickup(self, item):
+        if len(self.inventory) == self.maxItems:
+            return
         self.inventory.append(item)
 
     def levelup(self, amount):
