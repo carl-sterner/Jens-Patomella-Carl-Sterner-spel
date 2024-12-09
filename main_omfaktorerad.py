@@ -194,7 +194,7 @@ class UI:
                 x=0
                 y=0
                 for item in player.inventory:
-                    F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
+                    F.PrintText(screen, font, item, 250+(280*x), 449+(60*y), textObjekt)
                     x+=1
                     if x == 3:
                         y+=1
@@ -275,7 +275,7 @@ class UI:
             x=0
             y=0
             for item in player.inventory:
-                F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
+                F.PrintText(screen, font, item, 250+(280*x), 449+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
@@ -355,7 +355,7 @@ class Input:
         if gameState == 2:
             if subMenyVal == 0: # du tryckt på plocka upp
                 föremål = F.CheckForItems()
-                player.Pickup(föremål)
+                player.Pickup(föremål.typ)
                 index = karta.items.index(föremål)
                 karta.items.pop(index)
             gameState = 0

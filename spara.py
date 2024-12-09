@@ -21,7 +21,7 @@ def Spara(items, monsters, player):
             file.write("-----INVENTORY" + "\n")
             inv = player.inventory
             for item in inv:
-                file.write(str(item.typ)+"\n")
+                file.write(str(item)+"\n")
             file.write("-----ITEMS I VÄRLDEN" + "\n")
             for item in items:
                 file.write(str(item.typ) + "\n")
