@@ -1,7 +1,8 @@
 class Föremål:
-    def __init__(self, typ, cords):
+    def __init__(self, typ, strbonus, cords):
         self.typ = typ
         self.cords = cords
+        self.strbonus = strbonus
 
 class player:
     def __init__(self, hp, lvl, str, skill, pos, inventory):
