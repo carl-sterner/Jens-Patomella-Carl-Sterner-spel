@@ -17,7 +17,7 @@ import json
 
 def Spara(items, monsters, player):
     try:
-        with open("export.txt", "w", encoding="utf-8") as file:
+        with open("export", "w", encoding="utf-8") as file:
             file.write("-----ITEMS I VÄRLDEN" + "\n")
             for item in items:
                 file.write(str(item.typ) + "\n")
@@ -46,7 +46,7 @@ def Spara(items, monsters, player):
 
 def Läs():
     try:
-        with open("export.txt", "r", encoding="utf-8") as file:
+        with open("export", "r", encoding="utf-8") as file:
             return file.read()
     except Exception as e:
         print(f"exportfel: {e}")

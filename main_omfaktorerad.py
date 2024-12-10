@@ -77,20 +77,94 @@ class F:
                 return karta.monsters[i]
 
     @staticmethod
-    def LaddaInData(data):
-        global objekt
-        objekt = ""
-        for line in data:
+    def LaddaIn():
+        #ladda in information
+        information = spara.Läs()
+        if information != None:
+            i = information.splitlines()
+            items = []
+            monsters = []
+            appendObj = ""
+            count = 2
+            tT = []
+            for line in i:  
+                if appendObj == "Items":
+                    if count == 3:
+                        tT.append(str(line))
+                        count = 2
+                    elif count == 2:
+                        tT.append(int(line))
+                        count = 1
+                    else:
+                        count = 3
+                        tT.append(int(line))
+                        items.append(tT)
+                        tT = []
+                elif appendObj == "Monster":
+                    if count == 3:
+                        tT.append(line)
+                        count = 2
+                    elif count == 2:
+                        tT.append(int(line))
+                        count = 1
+                    else:
+                        count = 3
+                        tT.append(int(line))
+                        monsters.append(tT)
+                        tT = []
+                elif appendObj == "Spelare":
+                    if count == 5:
+                        player.pos = int(line)
+                        count = 4
+                    elif count == 4:
+                        player.str = int(line)
+                        count = 3
+                    elif count == 3:
+                        player.hp = int(line)
+                        count = 2
+                    elif count == 2:
+                        player.lvl = int(line)
+                        count = 1
+                    else:
+                        player.skill = int(line)
+                        appendObj = ""
+                elif appendObj == "Inventory":
+                    if count == 3:
+                        tT.append(str(line))
+                        count = 2
+                    elif count == 2:
+                        tT.append(int(line))
+                        count=1
+                    else:
+                        count = 3
+                        tT.append(int(line))
+                        nyItem = Föremål(tT[0], tT[1], tT[2])
+                        player.inventory.append(nyItem)
+                        tT = []      
 
+                if line == "-----ITEMS I VÄRLDEN":
+                    tT = []
+                    appendObj = "Items"
+                    count = 3
+                elif line == "-----MONSTER I VÄRLDEN":
+                    tT = []
+                    appendObj = "Monster"
+                    count = 3
+                elif line == "-----SPELARE":
+                    appendObj = "Spelare"
+                    count = 5
+                    tT = []
+                elif line == "-----INVENTORY":
+                    appendObj = "Inventory"
+                    tT = []
+                    count = 3
 
-            if line == "-----ITEMS I VÄRLDEN":
-                objekt = "Items"
-            elif line == "-----MONSTER I VÄRLDEN":
-                objekt = "Monster"
-            elif line == "-----SPELARE":
-                objekt = "Spelare"
-            elif line == "-----INVENTORY":
-                objekt = "Inventory"
+            karta.PlaceraFöremål(items)
+            karta.PlaceraMonster(monsters)
+        else:
+            karta.PlaceraFöremål(None)
+            karta.PlaceraMonster(None)
+        
 
 
 #globala variabler
@@ -372,6 +446,8 @@ class Input:
         global menyVal, subMenyVal, gameState, fightresultat
         if gameState == 2:
             if subMenyVal == 0: # du tryckt på plocka upp
+                if len(player.inventory) >= player.maxItems:
+                    return
                 föremål = F.CheckForItems()
                 player.Pickup(föremål)
                 index = karta.items.index(föremål)
@@ -520,7 +596,7 @@ class Spel:
         pygame.display.flip()
     
     def Uppdatera(self):
-        global fightBoxHåll, fightBoxPos, förloradeFight
+        global fightBoxHåll, fightBoxPos
         if menyVal == 6: #om du är i fight
             #rörelse fram och tillbaka
             if fightBoxPos > 825:
@@ -530,94 +606,8 @@ class Spel:
             fightBoxPos += 7*fightBoxHåll
         
     def Kör(self):
-        #ladda in information
-        information = spara.Läs()
-        if information != None:
-            i = information.splitlines()
-            items = []
-            monsters = []
-            appendObj = ""
-            count = 2
-            tT = []
-            for line in i:
-                
-                if appendObj == "Items":
-                    if count == 3:
-                        tT.append(str(line))
-                        count = 2
-                    elif count == 2:
-                        tT.append(int(line))
-                        count = 1
-                    else:
-                        count = 3
-                        tT.append(int(line))
-                        items.append(tT)
-                        tT = []
-                elif appendObj == "Monster":
-                    if count == 3:
-                        tT.append(line)
-                        count = 2
-                    elif count == 2:
-                        tT.append(int(line))
-                        count = 1
-                    else:
-                        count = 3
-                        tT.append(int(line))
-                        monsters.append(tT)
-                        tT = []
-                elif appendObj == "Spelare":
-                    if count == 5:
-                        player.pos = int(line)
-                        count = 4
-                    elif count == 4:
-                        player.str = int(line)
-                        count = 3
-                    elif count == 3:
-                        player.hp = int(line)
-                        count = 2
-                    elif count == 2:
-                        player.lvl = int(line)
-                        count = 1
-                    else:
-                        player.skill = int(line)
-                        appendObj = ""
-                elif appendObj == "Inventory":
-                    if count == 3:
-                        tT.append(str(line))
-                        count = 2
-                    elif count == 2:
-                        tT.append(int(line))
-                        count=1
-                    else:
-                        count = 3
-                        tT.append(int(line))
-                        nyItem = Föremål(tT[0], tT[1], tT[2])
-                        player.inventory.append(nyItem)
-                        tT = []      
-
-                if line == "-----ITEMS I VÄRLDEN":
-                    tT = []
-                    appendObj = "Items"
-                    count = 3
-                elif line == "-----MONSTER I VÄRLDEN":
-                    tT = []
-                    appendObj = "Monster"
-                    count = 3
-                elif line == "-----SPELARE":
-                    appendObj = "Spelare"
-                    count = 5
-                    tT = []
-                elif line == "-----INVENTORY":
-                    appendObj = "Inventory"
-                    tT = []
-                    count = 3
-
-            karta.PlaceraFöremål(items)
-            karta.PlaceraMonster(monsters)
-            
-        else:
-            karta.PlaceraFöremål(None)
-            karta.PlaceraMonster(None)
+        #ladda in sparad information från export-filen
+        F.LaddaIn()
 
         while self.running:
             self.Input()
