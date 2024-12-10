@@ -18,7 +18,7 @@ class Karta():
     def PlaceraFöremål(self, data):
         if data != None:
             for item in data:
-                nyItem = Föremål(item[0], item[1])
+                nyItem = Föremål(item[0], item[1], item[2])
                 self.items.append(nyItem)
             return
 
@@ -27,7 +27,8 @@ class Karta():
             i = random.randint(1, 100)
             if not i == player.pos and not i in self.items:
                 typ = random.choice(["Äpple", "Svärd", "Potion"])
-                nyItem = Föremål(typ, i)
+                strBonus = random.randint(1, 10)
+                nyItem = Föremål(typ, strBonus, i)
                 self.items.append(nyItem)
     
     def PlaceraMonster(self, data):
@@ -74,6 +75,23 @@ class F:
                     gameState = 1
                     menyVal = 5
                 return karta.monsters[i]
+
+    @staticmethod
+    def LaddaInData(data):
+        global objekt
+        objekt = ""
+        for line in data:
+
+
+            if line == "-----ITEMS I VÄRLDEN":
+                objekt = "Items"
+            elif line == "-----MONSTER I VÄRLDEN":
+                objekt = "Monster"
+            elif line == "-----SPELARE":
+                objekt = "Spelare"
+            elif line == "-----INVENTORY":
+                objekt = "Inventory"
+
 
 #globala variabler
 gameState = 0
@@ -194,7 +212,7 @@ class UI:
                 x=0
                 y=0
                 for item in player.inventory:
-                    F.PrintText(screen, font, item, 250+(280*x), 449+(60*y), textObjekt)
+                    F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
                     x+=1
                     if x == 3:
                         y+=1
@@ -275,7 +293,7 @@ class UI:
             x=0
             y=0
             for item in player.inventory:
-                F.PrintText(screen, font, item, 250+(280*x), 449+(60*y), textObjekt)
+                F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
@@ -355,7 +373,7 @@ class Input:
         if gameState == 2:
             if subMenyVal == 0: # du tryckt på plocka upp
                 föremål = F.CheckForItems()
-                player.Pickup(föremål.typ)
+                player.Pickup(föremål)
                 index = karta.items.index(föremål)
                 karta.items.pop(index)
             gameState = 0
@@ -516,27 +534,22 @@ class Spel:
         information = spara.Läs()
         if information != None:
             i = information.splitlines()
-            player.skill = int(i[-1])
-            player.lvl = int(i[-2])
-            player.hp = int(i[-3])
-            player.str = int(i[-4])
-            player.pos = int(i[-5])
-
             items = []
             monsters = []
             appendObj = ""
             count = 2
             tT = []
             for line in i:
-                if appendObj == "Player":
-                    if not line == "-----ITEMS I VÄRLDEN":
-                        player.inventory.append(line)
-                elif appendObj == "Items":
-                    if count == 2:
-                        tT.append(line)
+                
+                if appendObj == "Items":
+                    if count == 3:
+                        tT.append(str(line))
+                        count = 2
+                    elif count == 2:
+                        tT.append(int(line))
                         count = 1
                     else:
-                        count = 2
+                        count = 3
                         tT.append(int(line))
                         items.append(tT)
                         tT = []
@@ -553,23 +566,52 @@ class Spel:
                         monsters.append(tT)
                         tT = []
                 elif appendObj == "Spelare":
-                    pass
-                if line == "-----INVENTORY":
-                    appendObj = "Player"
+                    if count == 5:
+                        player.pos = int(line)
+                        count = 4
+                    elif count == 4:
+                        player.str = int(line)
+                        count = 3
+                    elif count == 3:
+                        player.hp = int(line)
+                        count = 2
+                    elif count == 2:
+                        player.lvl = int(line)
+                        count = 1
+                    else:
+                        player.skill = int(line)
+                        appendObj = ""
+                elif appendObj == "Inventory":
+                    if count == 3:
+                        tT.append(str(line))
+                        count = 2
+                    elif count == 2:
+                        tT.append(int(line))
+                        count=1
+                    else:
+                        count = 3
+                        tT.append(int(line))
+                        nyItem = Föremål(tT[0], tT[1], tT[2])
+                        player.inventory.append(nyItem)
+                        tT = []      
+
                 if line == "-----ITEMS I VÄRLDEN":
                     tT = []
                     appendObj = "Items"
-                    count = 2
+                    count = 3
                 elif line == "-----MONSTER I VÄRLDEN":
                     tT = []
                     appendObj = "Monster"
                     count = 3
                 elif line == "-----SPELARE":
                     appendObj = "Spelare"
-                    count = 1
+                    count = 5
                     tT = []
+                elif line == "-----INVENTORY":
+                    appendObj = "Inventory"
+                    tT = []
+                    count = 3
 
-            print(monsters)
             karta.PlaceraFöremål(items)
             karta.PlaceraMonster(monsters)
             
