@@ -7,44 +7,63 @@ class Karta():
     def __init__(self, w, h):
         self.w = w
         self.h = h
-        self.minObj = 21
-        self.maxObj = 34
+        self.minObj = 12
+        self.maxObj = 18
 
-        self.minMon = 21
-        self.maxMon = 34
+        self.minMon = 12
+        self.maxMon = 18
         self.monsters = []
         self.items = []
+        self.itemPos = []
+        self.monsterPos = []
 
     def PlaceraFöremål(self, data):
         if data != None:
             for item in data:
                 nyItem = Föremål(item[0], item[1], item[2])
                 self.items.append(nyItem)
+                self.itemPos.append(item[2])
             return
 
         j = random.randint(self.minObj, self.maxObj)
         while len(self.items) < j:
-            i = random.randint(1, 100)
-            if not i == player.pos and not i in self.items:
+            i = random.randint(0, 99)
+            if not i == player.pos and not i in self.itemPos:
                 typ = random.choice(["Äpple", "Svärd", "Potion"])
                 strBonus = random.randint(1, 10)
                 nyItem = Föremål(typ, strBonus, i)
                 self.items.append(nyItem)
+                self.itemPos.append(i)
     
     def PlaceraMonster(self, data):
         if data != None:
             for monster in data:
                 nyMonster = Monster(monster[0], monster[1], monster[2])
                 self.monsters.append(nyMonster)
+                self.monsterPos.append(monster[2])
             return
         j = random.randint(self.minMon, self.maxMon)
         while len(self.monsters) < j:
-            i = random.randint(1, 100)
-            if not i == player.pos and not i in self.items and not i in self.monsters:
+            i = random.randint(0, 99)
+            if not i == player.pos and not i in self.itemPos and not i in self.monsterPos:
                 typ = random.choice(["Zombie", "Varulv", "Drake"])
                 str = random.randint(5, 20)
                 nyaMonster = Monster(typ, str, i)
                 self.monsters.append(nyaMonster)
+                self.monsterPos.append(i)
+    
+    def SpawnaMonster(self):
+        if not len(self.monsters) >= self.maxMon:
+            for j in range(100):
+                i = random.randint(0, 99)
+                if not i == player.pos and not i in self.itemPos and not i in self.monsterPos:
+                    typ = random.choice(["Zombie", "Varulv", "Drake"])
+                    str = random.randint(5, 20)
+                    nyaMonster = Monster(typ, str, i)
+                    self.monsters.append(nyaMonster)
+                    self.monsterPos.append(i)
+                    print(i)
+                    return
 
 class F:
     @staticmethod
@@ -59,22 +78,36 @@ class F:
         textObjekt.clear()
 
     @staticmethod#jeh
-    def CheckForItems():
-        global gameState, menyVal, subMenyVal
-        for i in range(len(karta.items)):
-            if karta.items[i].cords == player.pos:
-                gameState = 2
-                return karta.items[i]
+    def CheckForItems(k=0):
+        if k==0:
+            global gameState, menyVal, subMenyVal
+            for i in range(len(karta.items)):
+                if karta.items[i].cords == player.pos:
+                    if gameState != 3:
+                        gameState = 2
+                    return karta.items[i]
+        else:
+            for i in range(len(karta.items)):
+                if karta.items[i].cords == player.pos:
+                    return True
+            return False
     
     @staticmethod
-    def CheckForMonsters():
-        global gameState, menyVal
-        for i in range(len(karta.monsters)):
-            if karta.monsters[i].cords == player.pos:
-                if gameState != 1:
-                    gameState = 1
-                    menyVal = 5
-                return karta.monsters[i]
+    def CheckForMonsters(k=0):
+        if k==0:
+            global gameState, menyVal, subMenyVal
+            for i in range(len(karta.monsters)):
+                if karta.monsters[i].cords == player.pos:
+                    if gameState != 1:
+                        gameState = 1
+                        menyVal = 5
+                        subMenyVal = 0
+                    return karta.monsters[i]
+        else:
+            for i in range(len(karta.items)):
+                if karta.items[i].cords == player.pos:
+                    return True
+            return False
 
     @staticmethod
     def LaddaIn():
@@ -164,6 +197,27 @@ class F:
         else:
             karta.PlaceraFöremål(None)
             karta.PlaceraMonster(None)
+    
+    @staticmethod
+    def BytUtItem():
+        global gameState, subMenyVal, menyVal, valtItem
+        #droppa föremålet du valt
+        itemAttTappa = player.inventory[valtItem] #spara själva objektet
+        player.inventory.pop(valtItem) #ta bort från inventory
+        itemAttTappa.cords = player.pos #lägga till nuvarande position till föremål
+
+        #plocka upp föremålet du står vid
+        föremål = F.CheckForItems() #hitta objektet av föremålet du står vid
+        player.inventory.insert(valtItem, föremål) #lägg till i inventory
+        index = karta.items.index(föremål) #hitta index av föremålet på kartan
+        karta.items.pop(index) #ta bort det föremålet från kart
+        karta.items.append(itemAttTappa) #lägga det föremålet du tappa på kart
+
+        #nollställ variabler
+        gameState = 0
+        subMenyVal = 0
+        menyVal = 0
+        valtItem = None
         
 
 
@@ -172,7 +226,8 @@ gameState = 0
 #gameState 0 = vanlig meny
 #gameState 1 = i en fight
 #gameState 2 = vid item
-#gameState 3 = du är död
+#gameState 3 = byt ut item i inventory
+#gameState 4 = du är död
 menyVal = 0
 #menyVal 0 = när man ser val 1-4
 #menyVal 1 = gå-meny
@@ -195,8 +250,12 @@ fightBoxHåll = 1
 #om du förloared figth
 fightresultat = 0
 
-#Skapa objekt
-player = player(10, 0, 20, 0, 45, [])
+#valt item som ska bytas ut
+valtItem = None
+
+#Skapa objekt 
+#        hp, lvl, str, skill, pos, inventory
+player = player(1, 0, 1, 0, 45, [])
 karta = Karta(10, 10)
 
 class UI:
@@ -230,13 +289,43 @@ class UI:
 
     @staticmethod
     def DrawUI(screen, font, textObjekt):
-        if gameState == 3:
-            F.PrintText(screen, font, "Du är död", 400, 200, textObjekt)
+        if gameState == 4:
+            F.ClearText(textObjekt)
+            F.PrintText(screen, font, "Du är död", 400, 300, textObjekt)
+            return
+        if gameState == 3:#g3
+            #rita själva boxen
+            pygame.draw.rect(screen, (40, 40, 40), (200, 329, 860, 200))
+            pygame.draw.rect(screen, (10, 10, 10), (205, 334, 850, 190))
+        
+            #allt under här är för att räkna x,y offset(samt text) för de olika grejerna man har i inventory
+            x=0
+            y=0
+            for i in range(len(player.inventory)):
+                if subMenyVal == i and valtItem == None:
+                    pygame.draw.rect(screen, (40, 40, 40), (240+(280*x), 344+(60*y), 120, 50), 0, 5)
+                F.PrintText(screen, font, player.inventory[i].typ, 250+(280*x), 349+(60*y), textObjekt)
+                x+=1
+                if x == 3:
+                    y+=1
+                    x=0
+            x=0
+            y=0
+            if valtItem != None:
+                for i in range(2):
+                    pygame.draw.rect(screen, (80, 80, 80), (450+(220*i), 550, 200, 80))
+                    #göra outline för alla boxar förutom den man kollar på så att säga
+                    if not subMenyVal == i:
+                        pygame.draw.rect(screen, (10, 10, 10), (455+(220*i), 555, 190, 70))
+                
+            F.PrintText(screen, font, "Fortsätt", 460, 565, textObjekt)
+            F.PrintText(screen, font, "Annat", 680, 565, textObjekt)
             return
 
         if gameState == 2:
             #rita själva boxen
             F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ}", 400, 300, textObjekt)
+            F.PrintText(screen, font, f"med {F.CheckForItems().strbonus}", 400, 350, textObjekt)
 
             for i in range(2):
                 pygame.draw.rect(screen, (80, 80, 80), (450+(220*i), 550, 200, 80))
@@ -244,7 +333,10 @@ class UI:
                 if not subMenyVal == i:
                     pygame.draw.rect(screen, (10, 10, 10), (455+(220*i), 555, 190, 70))
             
-            F.PrintText(screen, font, "Plocka Upp", 460, 565, textObjekt)
+            if len(player.inventory) == player.maxItems:
+                F.PrintText(screen, font, "Byt ut", 460, 565, textObjekt)
+            else:
+                F.PrintText(screen, font, "Plocka Upp", 460, 565, textObjekt)
             F.PrintText(screen, font, "Lämna", 680, 565, textObjekt)
             return
 
@@ -406,19 +498,44 @@ class UI:
 class Input:
     @staticmethod
     def Upp():
-        global menyVal, subMenyVal
+        global menyVal, subMenyVal, valtItem
+        if gameState == 3:
+            if valtItem == None:
+                if subMenyVal == 3:
+                    subMenyVal = 0
+                    return
+                if subMenyVal == 4:
+                    subMenyVal = 1
+            return
         if menyVal == 1:
             subMenyVal = 0 
     
     @staticmethod
     def Ner():
-        global menyVal, subMenyVal
+        global menyVal, subMenyVal, valtItem
+        if gameState == 3:
+            if valtItem == None:
+                if len(player.inventory) >= 4:
+                    if subMenyVal == 0:
+                        subMenyVal = 3
+                    elif subMenyVal == 1:
+                        subMenyVal = 4
+            return
         if menyVal == 1:
             subMenyVal = 1
 
     @staticmethod
     def Höger():
-        global menyVal, subMenyVal, gameState
+        global menyVal, subMenyVal, gameState, valtItem
+        if gameState == 3:
+            if valtItem == None:
+                if subMenyVal != len(player.inventory)-1:
+                    subMenyVal += 1
+                return
+            else:
+                if subMenyVal != 1:
+                    subMenyVal = 1
+                return
         if gameState == 2:
             subMenyVal = 1
             return
@@ -431,7 +548,16 @@ class Input:
 
     @staticmethod
     def Vänster():
-        global menyVal, subMenyVal, gameState
+        global menyVal, subMenyVal, gameState, valtItem
+        if gameState == 3:
+            if valtItem == None:
+                if subMenyVal != 0:
+                    subMenyVal -= 1
+                return
+            else:
+                if subMenyVal != 0:
+                    subMenyVal = 0
+                return
         if gameState == 2:
             subMenyVal = 0
             return
@@ -443,10 +569,24 @@ class Input:
 
     @staticmethod
     def Enter():
-        global menyVal, subMenyVal, gameState, fightresultat
+        global menyVal, subMenyVal, gameState, fightresultat, valtItem
+        if gameState == 3:
+            if valtItem == None:
+                valtItem = subMenyVal
+                subMenyVal = 0
+            else:
+                if subMenyVal == 0:
+                    F.BytUtItem()
+                    return
+                if subMenyVal == 1:
+                    valtItem = None
+                    return
+            return
         if gameState == 2:
             if subMenyVal == 0: # du tryckt på plocka upp
                 if len(player.inventory) >= player.maxItems:
+                    gameState = 3
+                    subMenyVal = 0
                     return
                 föremål = F.CheckForItems()
                 player.Pickup(föremål)
@@ -522,7 +662,10 @@ class Input:
 
     @staticmethod
     def Tillbaka():
-        global menyVal, subMenyVal
+        global menyVal, subMenyVal, gameState, valtItem
+        if gameState == 3:
+            gameState = 0
+            valtItem = None
         if gameState == 0:
             menyVal = 0
             subMenyVal = 0
@@ -542,6 +685,11 @@ class Spel:
         #textvariabler
         self.textObjekter = [] #håller koll på de texterna som ska ritas
 
+        #bakgrundstimer
+        self.tid = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.tid, 1000)  # tickar varje 1000ms(1s)
+        self.passeradTid = 0
+
     def Input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -550,6 +698,14 @@ class Spel:
 
                 pygame.quit()
                 exit()
+
+            if event.type == self.tid:
+                self.passeradTid += 1
+                print(self.passeradTid)
+                if self.passeradTid >= 15:
+                    #spawna monster
+                    karta.SpawnaMonster()
+                    self.passeradTid = 0
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -586,33 +742,45 @@ class Spel:
         self.screen.fill((10, 10, 10))
         
         UI.DrawUI(self.screen, self.font, self.textObjekter)
-        if fightresultat == 1:
-            F.PrintText(self.screen, self.font, "Du förlorade fighten", 400, 260, self.textObjekter)
-            F.PrintText(self.screen, self.font, "Du har tappat 1 hp", 400, 300, self.textObjekter)
-        if fightresultat == 2:
-            F.PrintText(self.screen, self.font, "Du vann fighten", 400, 260, self.textObjekter)
-            F.PrintText(self.screen, self.font, "Du har gått upp en level", 400, 300, self.textObjekter)
+        if gameState != 4:
+            if fightresultat == 1:
+                F.PrintText(self.screen, self.font, "Du förlorade fighten", 400, 260, self.textObjekter)
+                F.PrintText(self.screen, self.font, "Du har tappat 1 hp", 400, 300, self.textObjekter)
+            if fightresultat == 2:
+                F.PrintText(self.screen, self.font, "Du vann fighten", 400, 260, self.textObjekter)
+                F.PrintText(self.screen, self.font, "Du har gått upp en level", 400, 300, self.textObjekter)
+
+        if F.CheckForItems(1) == True:
+            F.PrintText(self.screen, pygame.font.SysFont("Arial", 16), "du står vid ett item", 400, 20, self.textObjekter)
         #uppdatera skärmen
         pygame.display.flip()
     
     def Uppdatera(self):
-        global fightBoxHåll, fightBoxPos
+        global fightBoxHåll, fightBoxPos, valtItem, gameState
         if menyVal == 6: #om du är i fight
             #rörelse fram och tillbaka
             if fightBoxPos > 825:
                 fightBoxHåll = -1
             elif fightBoxPos < 0:
                 fightBoxHåll = 1
-            fightBoxPos += 7*fightBoxHåll
-        
+            fightBoxPos += 9*fightBoxHåll
+
+        j = 0
+        for item in player.inventory:
+            j += item.strbonus
+        player.str = j+1
+        if player.hp == 0:
+            gameState = 4
+
     def Kör(self):
         #ladda in sparad information från export-filen
         F.LaddaIn()
-
+            
         while self.running:
             self.Input()
             self.Uppdatera()
             self.Rendera()
+
             self.clock.tick(120)
 
 if __name__ == "__main__":
