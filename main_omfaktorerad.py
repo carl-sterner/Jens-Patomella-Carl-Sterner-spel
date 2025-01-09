@@ -9,13 +9,18 @@ class Karta():
         self.h = h
         self.minObj = 12
         self.maxObj = 18
+        self.items = []
+        self.itemPos = []
 
         self.minMon = 12
         self.maxMon = 18
         self.monsters = []
-        self.items = []
-        self.itemPos = []
         self.monsterPos = []
+
+        self.minFäl = 6
+        self.maxFäl = 13
+        self.fällor = []
+        self.fällorPos = []
 
     def PlaceraFöremål(self, data):
         if data != None:
@@ -63,6 +68,21 @@ class Karta():
                     self.monsters.append(nyaMonster)
                     self.monsterPos.append(i)
                     return
+    
+    def PlaceraFällor(self, data):
+        if data != None:
+            for fälla in data:
+                nyFälla = Fällor(int(fälla))
+                self.fällor.append(nyFälla)
+                self.fällorPos.append(fälla)
+            return
+        j = random.randint(self.minFäl, self.maxFäl)
+        while len(self.fällor) < j:
+            i = random.randint(0, 99)
+            if not i == player.pos and not i in self.itemPos and not i in self.monsterPos and not i in self.fällorPos:
+                nyFälla = Fällor(i)
+                self.fällor.append(nyFälla)
+                self.fällorPos.append(i)
 
 class F:
     @staticmethod
@@ -709,7 +729,7 @@ class Spel:
             if event.type == self.tid:
                 self.passeradTid += 1
                 print(self.passeradTid)
-                if self.passeradTid >= 15:
+                if self.passeradTid >= 10:
                     #spawna monster
                     karta.SpawnaMonster()
                     self.passeradTid = 0
