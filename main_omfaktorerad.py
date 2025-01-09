@@ -62,7 +62,6 @@ class Karta():
                     nyaMonster = Monster(typ, str, i)
                     self.monsters.append(nyaMonster)
                     self.monsterPos.append(i)
-                    print(i)
                     return
 
 class F:
@@ -151,6 +150,8 @@ class F:
                         count = 4
                     elif count == 4:
                         player.str = int(line)
+                        global startStrength
+                        startStrength = int(line)
                         count = 3
                     elif count == 3:
                         player.hp = int(line)
@@ -247,11 +248,14 @@ subMenyVal = 0
 fightBoxPos = 0 #själva offsetten för boxen
 fightBoxHåll = 1
 
-#om du förloared figth
+#om du förloared fight
 fightresultat = 0
 
 #valt item som ska bytas ut
 valtItem = None
+
+#strength när du laddar in
+startStrength = 0
 
 #Skapa objekt 
 #        hp, lvl, str, skill, pos, inventory
@@ -769,7 +773,7 @@ class Spel:
         j = 0
         for item in player.inventory:
             j += item.strbonus
-        player.str = j+1
+        player.str = j+startStrength
         if player.hp == 0:
             gameState = 4
 

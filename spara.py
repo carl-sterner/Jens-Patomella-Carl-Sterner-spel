@@ -14,7 +14,10 @@ def Spara(items, monsters, player):
                 file.write(str(monster.cords) + "\n")
             file.write("-----SPELARE" + "\n")
             file.write(str(player.pos) + "\n")
-            file.write(str(player.str) + "\n")
+            j = 0
+            for item in player.inventory:
+                j += item.strbonus
+            file.write(str(player.str - j) + "\n")
             file.write(str(player.hp) + "\n")
             file.write(str(player.lvl) + "\n")
             file.write(str(player.skill) + "\n")
