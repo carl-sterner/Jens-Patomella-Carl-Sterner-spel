@@ -305,6 +305,7 @@ class UI:
                 if subMenyVal == i and valtItem == None:
                     pygame.draw.rect(screen, (40, 40, 40), (240+(280*x), 344+(60*y), 120, 50), 0, 5)
                 F.PrintText(screen, font, player.inventory[i].typ, 250+(280*x), 349+(60*y), textObjekt)
+                F.PrintText(screen, font, str(player.inventory[i].strbonus), 370+(280*x), 349+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
@@ -325,7 +326,7 @@ class UI:
         if gameState == 2:
             #rita själva boxen
             F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ}", 400, 300, textObjekt)
-            F.PrintText(screen, font, f"med {F.CheckForItems().strbonus}", 400, 350, textObjekt)
+            F.PrintText(screen, font, f"som ger {F.CheckForItems().strbonus} styrka", 400, 350, textObjekt)
 
             for i in range(2):
                 pygame.draw.rect(screen, (80, 80, 80), (450+(220*i), 550, 200, 80))
@@ -379,6 +380,7 @@ class UI:
                 y=0
                 for item in player.inventory:
                     F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
+                    F.PrintText(screen, font, str(item.strbonus), 370+(280*x), 449+(60*y), textObjekt)
                     x+=1
                     if x == 3:
                         y+=1
