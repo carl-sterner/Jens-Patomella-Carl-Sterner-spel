@@ -1,3 +1,5 @@
+import random 
+
 class Föremål:
     def __init__(self, typ, strbonus, cords):
         self.typ = typ
@@ -48,9 +50,18 @@ class player:
             return 1
         else:
             return 0
+          
+    def Undvik(self, skill):
+        if random.randint(1,100) <= self.skill * 10:
+            return
+        self.hp -= 1
 
 class Monster:
     def __init__(self, typ, str, cords):
         self.typ = typ
         self.str = str
+        self.cords = cords
+
+class Fällor:
+    def __init__(self, cords):
         self.cords = cords
