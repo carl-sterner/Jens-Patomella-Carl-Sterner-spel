@@ -460,6 +460,7 @@ class UI:
             y=0
             for item in player.inventory:
                 F.PrintText(screen, font, item.typ, 250+(280*x), 449+(60*y), textObjekt)
+                F.PrintText(screen, font, str(item.strbonus), 370+(280*x), 449+(60*y), textObjekt)
                 x+=1
                 if x == 3:
                     y+=1
