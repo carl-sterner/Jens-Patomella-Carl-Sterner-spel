@@ -80,6 +80,7 @@ class Karta():
         while len(self.fällor) < j:
             i = random.randint(0, 99)
             if not i == player.pos and not i in self.itemPos and not i in self.monsterPos and not i in self.fällorPos:
+                print(i)
                 nyFälla = Fällor(i)
                 self.fällor.append(nyFälla)
                 self.fällorPos.append(i)
@@ -136,6 +137,7 @@ class F:
             i = information.splitlines()
             items = []
             monsters = []
+            fällor = []
             appendObj = ""
             count = 2
             tT = []
@@ -164,6 +166,10 @@ class F:
                         tT.append(int(line))
                         monsters.append(tT)
                         tT = []
+                elif appendObj == "Fällor":
+                    if(line != "-----SPELARE"):
+                        fällor.append(int(line))
+                    
                 elif appendObj == "Spelare":
                     if count == 5:
                         player.pos = int(line)
@@ -204,6 +210,8 @@ class F:
                     tT = []
                     appendObj = "Monster"
                     count = 3
+                elif line == "-----FÄLLOR I VÄRLDEN":
+                    appendObj = "Fällor"
                 elif line == "-----SPELARE":
                     appendObj = "Spelare"
                     count = 5
@@ -215,9 +223,11 @@ class F:
 
             karta.PlaceraFöremål(items)
             karta.PlaceraMonster(monsters)
+            karta.PlaceraFällor(fällor)
         else:
             karta.PlaceraFöremål(None)
             karta.PlaceraMonster(None)
+            karta.PlaceraFällor(None)
     
     @staticmethod
     def BytUtItem():
@@ -305,6 +315,9 @@ class UI:
                             pygame.draw.rect(screen, (0, 0, 240), (i*11+1160, j*11+10, 10, 10))
                         elif karta.monsters[l].typ == "Drake":
                             pygame.draw.rect(screen, (240, 240, 0), (i*11+1160, j*11+10, 10, 10))
+                for p in range(len(karta.fällor)):
+                    if k == karta.fällor[p].cords:
+                        pygame.draw.rect(screen, (0, 240, 240), (i*11+1160, j*11+10, 10, 10))
 
                 if k == player.pos:
                     pygame.draw.rect(screen, (240, 240, 240), (i*11+1160, j*11+10, 10, 10))
@@ -721,7 +734,7 @@ class Spel:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 
-                print("exporterat data") if spara.Spara(karta.items, karta.monsters, player) == 0 else "fel med export"
+                print("exporterat data") if spara.Spara(karta.items, karta.monsters, karta.fällor, player) == 0 else "fel med export"
 
                 pygame.quit()
                 exit()

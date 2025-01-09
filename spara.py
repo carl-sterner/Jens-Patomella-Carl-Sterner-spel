@@ -1,5 +1,5 @@
 
-def Spara(items, monsters, player):
+def Spara(items, monsters, fällor, player):
     try:
         with open("export.txt", "w", encoding="utf-8") as file:
             file.write("-----ITEMS I VÄRLDEN" + "\n")
@@ -12,6 +12,9 @@ def Spara(items, monsters, player):
                 file.write(str(monster.typ) + "\n")
                 file.write(str(monster.str) + "\n")
                 file.write(str(monster.cords) + "\n")
+            file.write("-----FÄLLOR I VÄRLDEN" + "\n")
+            for fälla in fällor:
+                file.write(str(fälla.cords) + "\n")
             file.write("-----SPELARE" + "\n")
             file.write(str(player.pos) + "\n")
             j = 0
