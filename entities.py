@@ -51,10 +51,11 @@ class player:
         else:
             return 0
           
-    def Undvik(self, skill):
+    def Undvik(self):
         if random.randint(1,100) <= self.skill * 10:
-            return
+            return 1
         self.hp -= 1
+        return 2
 
 class Monster:
     def __init__(self, typ, str, cords):

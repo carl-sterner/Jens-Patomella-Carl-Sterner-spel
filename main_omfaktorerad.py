@@ -280,6 +280,7 @@ fightBoxHåll = 1
 
 #om du förloared fight
 fightresultat = 0
+fällaResultat = 0
 
 #valt item som ska bytas ut
 valtItem = None
@@ -287,9 +288,11 @@ valtItem = None
 #strength när du laddar in
 startStrength = 0
 
+
+
 #Skapa objekt 
 #        hp, lvl, str, skill, pos, inventory
-player = player(1, 0, 1, 0, 45, [])
+player = player(10, 0, 1, 0, 45, [])
 karta = Karta(10, 10)
 
 class UI:
@@ -609,7 +612,7 @@ class Input:
 
     @staticmethod
     def Enter():
-        global menyVal, subMenyVal, gameState, fightresultat, valtItem
+        global menyVal, subMenyVal, gameState, fightresultat, valtItem, fällaResultat
         if gameState == 3:
             if valtItem == None:
                 valtItem = subMenyVal
@@ -666,6 +669,7 @@ class Input:
 
         if menyVal == 1:
             fightresultat = 0
+            fällaResultat = 0
 
             if subMenyVal == 0:
                 player.Move("Norr")
@@ -680,6 +684,7 @@ class Input:
             if F.CheckForItems() != None:
                 subMenyVal = 0
             F.CheckForMonsters()
+
 
         if menyVal == 6:
             global fightBoxPos
@@ -792,6 +797,22 @@ class Spel:
 
         if F.CheckForItems(1) == True:
             F.PrintText(self.screen, pygame.font.SysFont("Arial", 16), "du står vid ett item", 400, 20, self.textObjekter)
+        
+        global fällaResultat
+        
+        for fälla in karta.fällor:
+            if player.pos == fälla.cords:
+                fällaResultat = player.Undvik()
+                karta.fällor.pop(karta.fällor.index(fälla))
+                global menyVal, subMenyVal
+                menyVal = 0
+                subMenyVal = 0
+
+        if(fällaResultat == 1):
+            F.PrintText(self.screen, self.font, "du unvek fällan", 400, 300, self.textObjekter)
+        elif(fällaResultat == 2):
+            F.PrintText(self.screen, self.font, "du gick i en fälla och tappade § hp", 400, 300, self.textObjekter)
+
         #uppdatera skärmen
         pygame.display.flip()
     
@@ -811,6 +832,7 @@ class Spel:
         player.str = j+startStrength
         if player.hp == 0:
             gameState = 4
+
 
     def Kör(self):
         #ladda in sparad information från export-filen
