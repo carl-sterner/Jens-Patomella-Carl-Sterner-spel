@@ -292,7 +292,7 @@ startStrength = 0
 
 #Skapa objekt 
 #        hp, lvl, str, skill, pos, inventory
-player = player(10, 0, 1, 0, 45, [])
+player = player(10, 0, 1, 1, 45, [])
 karta = Karta(10, 10)
 
 class UI:
@@ -811,7 +811,7 @@ class Spel:
         if(fällaResultat == 1):
             F.PrintText(self.screen, self.font, "du unvek fällan", 400, 300, self.textObjekter)
         elif(fällaResultat == 2):
-            F.PrintText(self.screen, self.font, "du gick i en fälla och tappade § hp", 400, 300, self.textObjekter)
+            F.PrintText(self.screen, self.font, "du gick i en fälla och tappade 1 hp", 400, 300, self.textObjekter)
 
         #uppdatera skärmen
         pygame.display.flip()
