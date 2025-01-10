@@ -50,7 +50,7 @@ class Karta():
         j = random.randint(self.minMon, self.maxMon)
         while len(self.monsters) < j:
             i = random.randint(0, 99)
-            if not i == player.pos and not i in self.itemPos and not i in self.monsterPos:
+            if not i == player.pos and not i in self.itemPos and not i in self.monsterPos and not i in self.fällorPos:
                 typ = random.choice(["Zombie", "Varulv", "Drake"])
                 str = random.randint(5, 20)
                 nyaMonster = Monster(typ, str, i)
@@ -61,7 +61,7 @@ class Karta():
         if not len(self.monsters) >= self.maxMon:
             for j in range(100):
                 i = random.randint(0, 99)
-                if not i == player.pos and not i in self.itemPos and not i in self.monsterPos:
+                if not i == player.pos and not i in self.itemPos and not i in self.monsterPos and not i in self.fällorPos:
                     typ = random.choice(["Zombie", "Varulv", "Drake"])
                     str = random.randint(5, 20)
                     nyaMonster = Monster(typ, str, i)
