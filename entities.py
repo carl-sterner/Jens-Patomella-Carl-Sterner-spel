@@ -35,6 +35,7 @@ class player:
 
     def levelup(self, amount):
         self.lvl += amount
+        self.skill += amount
 
     def Attack(self, fightBoxPos, monster):
         boost = 0
