@@ -1,10 +1,11 @@
 import random 
 
 class Föremål:
-    def __init__(self, typ, strbonus, cords):
+    def __init__(self, typ, strbonus, cords, container):
         self.typ = typ
         self.strbonus = strbonus
         self.cords = cords
+        self.container = container #en kista, en buske, en grop
 
 class player:
     def __init__(self, hp, lvl, str, skill, pos, inventory):
