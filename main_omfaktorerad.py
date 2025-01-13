@@ -364,7 +364,6 @@ class UI:
             return
 
         if gameState == 2:
-            #rita själva boxen
             F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ}", 400, 300, textObjekt)
             F.PrintText(screen, font, f"som ger {F.CheckForItems().strbonus} styrka", 400, 350, textObjekt)
 
