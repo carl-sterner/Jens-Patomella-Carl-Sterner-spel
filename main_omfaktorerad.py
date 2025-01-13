@@ -252,7 +252,7 @@ class F:
         
 
 
-#globala variabler
+#----------------------------globala variabler
 gameState = 0
 #gameState 0 = vanlig meny
 #gameState 1 = i en fight
@@ -834,7 +834,7 @@ class Spel:
             gameState = 4
 
 
-    def Kör(self):
+    def Kör(self): # flödeskema
         #ladda in sparad information från export-filen
         F.LaddaIn()
             
