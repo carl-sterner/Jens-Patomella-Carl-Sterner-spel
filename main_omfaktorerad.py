@@ -372,7 +372,16 @@ class UI:
             return
 
         if gameState == 2:
-            F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ} i en {F.CheckForItems().container}", 400, 300, textObjekt)
+            if(F.CheckForItems().container == "mark"):
+                if(F.CheckForItems().typ == "Potion"):
+                    F.PrintText(screen, font, f"Du ser en {F.CheckForItems().typ} på {F.CheckForItems().container}en", 400, 300, textObjekt)
+                else:
+                    F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ} på {F.CheckForItems().container}en", 400, 300, textObjekt)
+            else:
+                if(F.CheckForItems().typ == "Potion"):    
+                    F.PrintText(screen, font, f"Du ser en {F.CheckForItems().typ} i en {F.CheckForItems().container}", 400, 300, textObjekt)
+                else:
+                    F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ} i en {F.CheckForItems().container}", 400, 300, textObjekt)
             F.PrintText(screen, font, f"som ger {F.CheckForItems().strbonus} styrka", 400, 350, textObjekt)
 
             for i in range(2):
