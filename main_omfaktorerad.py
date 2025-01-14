@@ -37,7 +37,7 @@ class Karta():
                 typ = random.choice(["Äpple", "Svärd", "Potion"])
                 container = random.choice(["buske", "kista", "grop"])
                 strBonus = random.randint(1, 10)
-                nyItem = Föremål(typ, strBonus, container, i)
+                nyItem = Föremål(typ, strBonus, i, container)
                 self.items.append(nyItem)
                 self.itemPos.append(i)
     
@@ -365,7 +365,7 @@ class UI:
             return
 
         if gameState == 2:
-            F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ}", 400, 300, textObjekt)
+            F.PrintText(screen, font, f"Du ser ett {F.CheckForItems().typ} i en {F.CheckForItems().container}", 400, 300, textObjekt)
             F.PrintText(screen, font, f"som ger {F.CheckForItems().strbonus} styrka", 400, 350, textObjekt)
 
             for i in range(2):
