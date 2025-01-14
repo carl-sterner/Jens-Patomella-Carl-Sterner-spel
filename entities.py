@@ -32,6 +32,7 @@ class player:
     def Pickup(self, item):
         if len(self.inventory) == self.maxItems:
             return
+        item.container = "Player"
         self.inventory.append(item)
 
     def levelup(self, amount):

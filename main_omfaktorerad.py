@@ -193,16 +193,19 @@ class F:
                         player.skill = int(line)
                         appendObj = ""
                 elif appendObj == "Inventory":
-                    if count == 3:
+                    if count == 4:
                         tT.append(str(line))
-                        count = 2
+                        count = 3
+                    elif count == 3:
+                        tT.append(int(line))
+                        count=2
                     elif count == 2:
                         tT.append(int(line))
-                        count=1
+                        count = 1
                     else:
-                        count = 3
-                        tT.append(int(line))
-                        nyItem = Föremål(tT[0], tT[1], tT[2])
+                        count = 4
+                        tT.append(str(line))
+                        nyItem = Föremål(tT[0], tT[1], tT[2], tT[3])
                         player.inventory.append(nyItem)
                         tT = []      
 
@@ -223,7 +226,7 @@ class F:
                 elif line == "-----INVENTORY":
                     appendObj = "Inventory"
                     tT = []
-                    count = 3
+                    count = 4
 
             karta.PlaceraFöremål(items)
             karta.PlaceraMonster(monsters)
@@ -240,6 +243,7 @@ class F:
         itemAttTappa = player.inventory[valtItem] #spara själva objektet
         player.inventory.pop(valtItem) #ta bort från inventory
         itemAttTappa.cords = player.pos #lägga till nuvarande position till föremål
+        itemAttTappa.container = "mark"
 
         #plocka upp föremålet du står vid
         föremål = F.CheckForItems() #hitta objektet av föremålet du står vid
@@ -309,22 +313,22 @@ class UI:
                 for h in range(len(karta.items)):
                     if k == karta.items[h].cords:
                         if karta.items[h].typ == "Äpple":
-                            pygame.draw.rect(screen, (240, 00, 0), (i*11+1160, j*11+10, 10, 10))
+                            pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
                         elif karta.items[h].typ == "Svärd":
-                            pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+                            pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
                         elif karta.items[h].typ == "Potion":
-                            pygame.draw.rect(screen, (240, 0, 0), (i*11+1160, j*11+10, 10, 10))
+                            pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
                 for l in range(len(karta.monsters)):
                     if k == karta.monsters[l].cords:
                         if karta.monsters[l].typ == "Zombie":
-                            pygame.draw.rect(screen, (0, 240, 0), (i*11+1160, j*11+10, 10, 10))
+                            pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
                         elif karta.monsters[l].typ == "Varulv":
-                            pygame.draw.rect(screen, (0, 0, 240), (i*11+1160, j*11+10, 10, 10))
+                            pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
                         elif karta.monsters[l].typ == "Drake":
-                            pygame.draw.rect(screen, (240, 240, 0), (i*11+1160, j*11+10, 10, 10))
+                            pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
                 for p in range(len(karta.fällor)):
                     if k == karta.fällor[p].cords:
-                        pygame.draw.rect(screen, (0, 240, 240), (i*11+1160, j*11+10, 10, 10))
+                        pygame.draw.rect(screen, (70, 70, 70), (i*11+1160, j*11+10, 10, 10))
 
                 if k == player.pos:
                     pygame.draw.rect(screen, (240, 240, 240), (i*11+1160, j*11+10, 10, 10))

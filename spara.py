@@ -30,6 +30,7 @@ def Spara(items, monsters, fällor, player):
                 file.write(str(item.typ)+"\n")
                 file.write(str(item.strbonus)+"\n")
                 file.write(str(item.cords)+"\n")
+                file.write(str(item.container)+"\n")
         return 0
     except Exception as e:
         print(f"exportfel: {e}")
