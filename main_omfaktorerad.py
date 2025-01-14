@@ -25,7 +25,7 @@ class Karta():
     def PlaceraFöremål(self, data):
         if data != None:
             for item in data:
-                nyItem = Föremål(item[0], item[1], item[2])
+                nyItem = Föremål(item[0], item[1], item[2], item[3])
                 self.items.append(nyItem)
                 self.itemPos.append(item[2])
             return
@@ -37,7 +37,7 @@ class Karta():
                 typ = random.choice(["Äpple", "Svärd", "Potion"])
                 container = random.choice(["buske", "kista", "grop"])
                 strBonus = random.randint(1, 10)
-                nyItem = Föremål(typ, strBonus, container, i)
+                nyItem = Föremål(typ, strBonus, i, container)
                 self.items.append(nyItem)
                 self.itemPos.append(i)
     
@@ -144,15 +144,18 @@ class F:
             tT = []
             for line in i:  
                 if appendObj == "Items":
-                    if count == 3:
+                    if count == 4:
                         tT.append(str(line))
+                        count = 3
+                    elif count == 3:
+                        tT.append(int(line))
                         count = 2
                     elif count == 2:
                         tT.append(int(line))
                         count = 1
                     else:
-                        count = 3
-                        tT.append(int(line))
+                        count = 4
+                        tT.append(str(line))
                         items.append(tT)
                         tT = []
                 elif appendObj == "Monster":
@@ -206,7 +209,7 @@ class F:
                 if line == "-----ITEMS I VÄRLDEN":
                     tT = []
                     appendObj = "Items"
-                    count = 3
+                    count = 4
                 elif line == "-----MONSTER I VÄRLDEN":
                     tT = []
                     appendObj = "Monster"

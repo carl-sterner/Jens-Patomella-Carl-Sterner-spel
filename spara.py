@@ -7,6 +7,7 @@ def Spara(items, monsters, fällor, player):
                 file.write(str(item.typ) + "\n")
                 file.write(str(item.strbonus) + "\n")
                 file.write(str(item.cords) + "\n")
+                file.write(str(item.container) + "\n")
             file.write("-----MONSTER I VÄRLDEN" + "\n")
             for monster in monsters:
                 file.write(str(monster.typ) + "\n")
