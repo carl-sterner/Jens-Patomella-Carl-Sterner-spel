@@ -35,8 +35,9 @@ class Karta():
             i = random.randint(0, 99)
             if not i == player.pos and not i in self.itemPos:
                 typ = random.choice(["Äpple", "Svärd", "Potion"])
+                container = random.choice(["buske", "kista", "grop"])
                 strBonus = random.randint(1, 10)
-                nyItem = Föremål(typ, strBonus, i)
+                nyItem = Föremål(typ, strBonus, container, i)
                 self.items.append(nyItem)
                 self.itemPos.append(i)
     

@@ -5,7 +5,7 @@ class Föremål:
         self.typ = typ
         self.strbonus = strbonus
         self.cords = cords
-        self.container = container #en kista, en buske, en grop
+        self.container = container
 
 class player:
     def __init__(self, hp, lvl, str, skill, pos, inventory):
