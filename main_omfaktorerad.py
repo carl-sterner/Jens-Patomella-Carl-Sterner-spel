@@ -400,7 +400,7 @@ class UI:
         #gamestate 1 är här
         if gameState == 1:
             try:
-                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str + round(player.lvl*0.8)} styrka", 400, 300, textObjekt)
+                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str + round(player.lvl*2)} styrka", 400, 300, textObjekt)
             except:
                 return
             if menyVal == 5:

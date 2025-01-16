@@ -49,7 +49,8 @@ class player:
                     boost = 1.2
                     if fightBoxPos+210 >= 600 and fightBoxPos+210 <= 600+60:
                         boost = 1.3
-        if self.str * boost > monster.str + round(self.lvl*0.8):
+
+        if self.str * boost > monster.str + round(self.lvl*2):
             print(boost)
             return 1
         else:
