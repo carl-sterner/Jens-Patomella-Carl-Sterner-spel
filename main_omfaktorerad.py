@@ -400,7 +400,7 @@ class UI:
         #gamestate 1 är här
         if gameState == 1:
             try:
-                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str} styrka", 400, 300, textObjekt)
+                F.PrintText(screen, font, f"Du har stött på en {F.CheckForMonsters().typ} med {F.CheckForMonsters().str + round(player.lvl*0.8)} styrka", 400, 300, textObjekt)
             except:
                 return
             if menyVal == 5:
@@ -831,6 +831,9 @@ class Spel:
             F.PrintText(self.screen, self.font, "du unvek fällan", 400, 300, self.textObjekter)
         elif(fällaResultat == 2):
             F.PrintText(self.screen, self.font, "du gick i en fälla och tappade 1 hp", 400, 300, self.textObjekter)
+
+        if player.lvl == 10:
+            F.PrintText(self.screen, self.font, "Du har vunnit", 200, 200, self.textObjekter)
 
         #uppdatera skärmen
         pygame.display.flip()
