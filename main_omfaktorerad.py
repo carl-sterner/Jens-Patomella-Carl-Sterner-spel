@@ -476,7 +476,7 @@ class UI:
             F.PrintText(screen, font, "Gå", 225, 567, textObjekt)
             F.PrintText(screen, font, "Inventory", 437, 567, textObjekt)
             F.PrintText(screen, font, "Stats", 660, 567, textObjekt)
-            F.PrintText(screen, font, "Obestämt", 880, 567, textObjekt)
+            F.PrintText(screen, font, "Stäng av", 880, 567, textObjekt)
             
             return
 
@@ -664,8 +664,11 @@ class Input:
                 menyVal = 2
             elif subMenyVal == 2: #om man tryckt på "Stats"
                 menyVal = 3
-            elif subMenyVal == 3: #om man tryckt på "Ombestämt"
-                menyVal = 4
+            elif subMenyVal == 3: #om man tryckt på "stäng av"
+                print("exporterat data") if spara.Spara(karta.items, karta.monsters, karta.fällor, player) == 0 else "fel med export"
+
+                pygame.quit()
+                exit()
             subMenyVal = 0
             return
         
