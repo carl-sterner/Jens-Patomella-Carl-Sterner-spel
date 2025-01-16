@@ -844,7 +844,7 @@ class Spel:
                     return
 
     def Rendera(self):
-        #töm skärmen
+        #töm skärmen 
         self.screen.fill((10, 10, 10))
         
         UI.DrawUI(self.screen, self.font, self.textObjekter)
