@@ -301,7 +301,7 @@ startStrength = 0
 
 #Skapa objekt 
 #        hp, lvl, str, skill, pos, inventory
-player = player(1, 0, 1, 1, 45, [])
+player = player(10, 0, 1, 1, 45, [])
 karta = Karta(10, 10)
 
 class UI:
