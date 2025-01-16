@@ -2,6 +2,7 @@ import pygame
 from entities import *
 import random
 import spara
+import os
 
 class Karta():
     def __init__(self, w, h):
@@ -300,7 +301,7 @@ startStrength = 0
 
 #Skapa objekt 
 #        hp, lvl, str, skill, pos, inventory
-player = player(10, 0, 1, 1, 45, [])
+player = player(1, 0, 1, 1, 45, [])
 karta = Karta(10, 10)
 
 class UI:
@@ -340,6 +341,16 @@ class UI:
         if gameState == 4:
             F.ClearText(textObjekt)
             F.PrintText(screen, font, "Du är död", 400, 300, textObjekt)
+
+            for i in range(2):
+                pygame.draw.rect(screen, (80, 80, 80), (450+(220*i), 550, 200, 80))
+                #göra outline för alla boxar förutom den man kollar på så att säga
+                print(subMenyVal)
+                if not subMenyVal == i:
+                    pygame.draw.rect(screen, (10, 10, 10), (455+(220*i), 555, 190, 70))
+                
+            F.PrintText(screen, font, "Börja om", 460, 565, textObjekt)
+            F.PrintText(screen, font, "Stäng av", 680, 565, textObjekt)
             return
         if gameState == 3:#g3
             #rita själva boxen
@@ -586,6 +597,9 @@ class Input:
     @staticmethod
     def Höger():
         global menyVal, subMenyVal, gameState, valtItem
+        if gameState == 4:
+            subMenyVal = 1
+            return
         if gameState == 3:
             if valtItem == None:
                 if subMenyVal != len(player.inventory)-1:
@@ -608,6 +622,9 @@ class Input:
     @staticmethod
     def Vänster():
         global menyVal, subMenyVal, gameState, valtItem
+        if gameState == 4:
+            subMenyVal = 0
+            return
         if gameState == 3:
             if valtItem == None:
                 if subMenyVal != 0:
@@ -629,6 +646,31 @@ class Input:
     @staticmethod
     def Enter():
         global menyVal, subMenyVal, gameState, fightresultat, valtItem, fällaResultat
+        
+        if gameState == 4:
+            if subMenyVal == 0:
+                if os.path.exists("export.txt"):
+                    os.remove("export.txt")
+                subMenyVal = 0
+                menyVal = 0
+                gameState = 0
+                player.pos = 45
+                F.LaddaIn()
+                player.hp = 10
+                player.lvl = 0
+                player.skill = 1
+                player.inventory = []
+                player.str = 0
+                fightresultat = 0
+                fällaResultat = 0
+                print("exporterat data") if spara.Spara(karta.items, karta.monsters, karta.fällor, player) == 0 else "fel med export"
+            if subMenyVal == 1:
+                print("exporterat data") if spara.Spara(karta.items, karta.monsters, karta.fällor, player) == 0 else "fel med export"
+
+                pygame.quit()
+                exit()
+            return
+
         if gameState == 3:
             if valtItem == None:
                 valtItem = subMenyVal
@@ -832,7 +874,7 @@ class Spel:
         elif(fällaResultat == 2):
             F.PrintText(self.screen, self.font, "du gick i en fälla och tappade 1 hp", 400, 300, self.textObjekter)
 
-        if player.lvl == 10:
+        if player.lvl == 10 and player.hp != 0:
             F.PrintText(self.screen, self.font, "Du har vunnit", 200, 200, self.textObjekter)
 
         #uppdatera skärmen
